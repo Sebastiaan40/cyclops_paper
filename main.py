@@ -27,18 +27,21 @@ def main():
     # set up the tissue:
     n = 256
     tissue = fw.CardiacTissue2D([n, n])
-    tissue.mesh[n // 2, : n // 2] = 2
+    tissue.mesh[n // 4 - 16 : n // 4 + 16, n // 4 - 16 : n // 4 + 16] = 0
+    tissue.mesh[3 * n // 4 - 16 : 3 * n // 4 + 16, n // 4 - 16 : n // 4 + 16] = 0
+
+    tissue.mesh[n // 4 - 32 : n // 4 + 32, 3 * n // 4 - 32 : 3 * n // 4 + 32] = 0
+
+    tissue.mesh[n // 4 - 2 : n // 4 + 2, n // 4 + 16 : 3 * n // 4 - 32] = 2
 
     mesh_without_block = tissue.mesh.copy()
-    mesh_without_block[n // 2, : n // 2] = 1
+    mesh_without_block[n // 4 - 2 : n // 4 + 2, n // 4 + 16 : 3 * n // 4 - 32] = 1
 
     # set up stimulation parameters:
     stim_sequence = fw.StimSequence()
     stim_sequence.add_stim(
-        fw.StimVoltageCoord2D(time=0, volt_value=1, x1=0, x2=n // 2, y1=0, y2=5)
+        fw.StimVoltageCoord2D(time=0, volt_value=1, x1=0, x2=5, y1=0, y2=n)
     )
-    # stim_sequence.add_stim(fw.StimVoltageCoord2D(time=50, volt_value=1,
-    #                                              x1=n//2, x2=n, y1=0, y2=n))
 
     command_sequence = fw.CommandSequence()
     command_sequence.add_command(UpdateMesh(45, mesh_without_block))
@@ -66,10 +69,15 @@ def main():
     model.run(initialize=False)
     u_150 = model.u.copy()
 
-    fig, axs = plt.subplots(ncols=3)
+    model.t_max = 250
+    model.run(initialize=False)
+    u_250 = model.u.copy()
+
+    fig, axs = plt.subplots(ncols=4)
     axs[0].imshow(u_10, cmap="hot")
     axs[1].imshow(u_46, cmap="hot")
     axs[2].imshow(u_150, cmap="hot")
+    axs[3].imshow(u_250, cmap="hot")
     plt.show()
 
 
