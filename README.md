@@ -1,65 +1,100 @@
-# Abstract
+# Phase Defect Analysis (temporary title)
 
-Rotational activity is one of the mechanisms behind cardiac arrhythmias,
-and it is therefore important to accurately localize such activity in cardiac tissue.
-A standard method for this, is called phasemapping.
-While widely used for analysing rotors in cardiac simulations,
-phasemapping struggles to correctly analyse activation maps with large non-conductive regions
-and/or conductive blocks.
-To illustrate these, we examine a simulation that exhibits these treats,
-and demonstrate how each of them can be addressed.
+This repository contains the full pipeline for a study on **phase defects**, including:
 
-# Introduction
+- Python scripts to run and analyze simulations
+- Python scripts to create the figures that are used in the paper
+- LaTeX source code for the accompanying scientific paper
 
-**Action**
+## Project Structure
 
-- Introduce the simulation
-- Refer to analysis with standard phasemapping
-- Refer to analysis using extended phasemapping --> curiosity
+📁 simulation/ Scripts to run simulations of phase defects
+📁 analysis/ Scripts to post-process and analyze the simulation results
+📁 snapshots/ Scripts to generate annotated figures and visualizations
+📁 paper/ LaTeX source code for the paper
+📁 data/ Empty by default; data is fetched from Zenodo
 
-**Background (research topic, niche, problem, solution, introdcution to methods)**
+## Getting Started
 
-- Make problems with the simulation concrete
-- Explain that these are common in clinical cases
-- Introduce the solution
+Clone the repository and install the required Python dependencies:
 
-**Development**
+```bash
+git clone https://github.com/your-username/phase-defect-analysis.git
+cd phase-defect-analysis
+python3 -m venv venv
+pip install -r requirements.txt
+```
 
-# Methods
+To reproduce the figures and analysis:
 
-- What is phase?
-- The phase index and its properties
-- Standard phasemapping method
-- Simulation
+1. Run the simulation or use the archived data.
+2. Use the analysis and snapshot scripts to generate plots and figures.
+3. Compile the paper using `latexmk` or your preferred LaTeX workflow.
 
-**Climax**
+## Data Availability
 
-# Results
+All simulation outputs, and final figures are archived and publicly available via Zenodo:
 
-- First step: standard method
-- Second step: removing edges that go through phase defects
-- Third step: going around phase defects
+👉 [**Zenodo Archive**](https://doi.org/xx.xxxx/zenodo.xxxxxx)
 
-# Discussion
+The Zenodo record includes:
 
-- Showcase clinical relevance.
-- Limitations: simulation instead of clinical case, phase is necessary to know
-  --> We can use the signals or LATs if needed
-- Paper arno2023 --> even more impractical for clinical cases
-- Growth and shrinking is irrelevant for AT (although functional block is temporal)
-- Paper kabus2024 --> phase definitions, sawtooth
-- Limitations: identifying phase defects
-- Paper arno2024
-- Limitations: noisy data
-- Finite wavelength could give an additional requirement which can limit false positives
-- Paper of different phasemapping thresholds might be explained by phase defects
-- Comparison with different methods (back-tracking, intersection points)
-  --> back-tracking cannot find near-complete rotations
-  --> intersection points are the same as phasemapping
+- Raw simulation data
+- Snapshots used in the manuscript
+- A frozen version of this GitHub repository
 
-**Ending**
+## Preregistration and Clinical Relevance
 
-# Conclusion
+Although this project is primarily theoretical, it is designed with **clinical applications in mind**.
+The tools developed here support the design and setup of clinical studies involving phase defects.
+To promote **transparency, reproducibility, and reusability**,
+we have preregistered both the analysis tools and a clinical study protocol.
 
-- Properly addressing phasedefects and adapting the curve can make phasemapping
-  suitable for analysing clinical cases. Refer to preregistration.
+**Preregistration on OSF**:
+The full preregistration, including the study rationale, expected outcomes, and intended analysis pipeline, is available at:
+
+👉 [**OSF Project Page**](https://osf.io/your-project-id)
+
+This registration includes:
+
+- A formal study protocol for potential clinical implementation
+- Documentation of simulation and analysis tools
+- Planned hypotheses and outcome measures for clinical data
+
+We encourage researchers and clinicians to reuse and adapt these tools for their own studies,
+and we welcome collaboration or feedback.
+
+## Citation
+
+If you use this code or data, please cite the Zenodo archive:
+
+```
+@software{verstraeten2025,
+  author       = {Bjorn Verstraeten},
+  title        = {Phase Defect Analysis},
+  year         = 2025,
+  publisher    = {Zenodo},
+  doi          = {10.xxxx/zenodo.xxxxxx},
+  url          = {https://doi.org/10.xxxx/zenodo.xxxxxx}
+}
+```
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contact Information
+
+For questions, feedback, or collaboration inquiries, please contact:
+
+### Lead Researcher
+
+**Bjorn Verstraeten**  
+PhD Researcher, Ghent University  
+📧 bjorn.verstraeten@ugent.be
+
+### Supervisor
+
+**Nele Vandersickel**  
+Professor, Ghent University  
+📧 nele.vandersickel@ugent.be
