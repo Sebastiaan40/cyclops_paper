@@ -42,22 +42,83 @@ We will then formally define conductive blocks and
 showcase how to extend standard phasemapping
 in order to treat conductive block and non-conductive regions properly.
 
-- Introduce the simulation
-- Refer to analysis with standard phasemapping
-- Refer to analysis using extended phasemapping --> curiosity
+# Theory
 
-**Background (research topic, niche, problem, solution, introdcution to methods)**
+## What is phase?
 
-- Make problems with the simulation concrete
-- Explain that these are common in clinical cases
-- Introduce the solution
+## What is a phase defect or conduction block
 
-**Development**
+## What is the phase index?
+
+When analyzing an electroanatomical map,
+we often want to know if there is some rotational activity present,
+since this is one of the mechanisms behind cardiac arrhythmia.
+To express rotational activity a bit more quantitative,
+we can state that, if there is a closed curve C around which
+the electrical excitation travels,
+there is rotational activity across that curve.
+
+We can get an even clearer expression if we look at the phase field $\Phi(x, t)$
+in a two-dimensional orientable manifold M (e.g. a plane or the surface of a sphere).
+Suppose that $\Phi$ is smooth across $C$,
+and we follow it along C until we end up back at the starting point.
+The value will now be the same, or it will be shifted by $2\pi$.
+This expression can also be written down in a mathematical formula.
+
+$$
+2\pi I = \oint_C \nabla \Phi \cdot dl ,
+$$
+
+where $I$ is called the phase index of the curve.
+Using Stokes' theorem,
+the phase index can also be written as
+
+$$
+I = \frac{1}{2\pi} \int\int_S \nabla \times (\nabla \Phi) \cdot dS
+$$
+
+In case $\Phi$ is differentiable across S,
+the index $I$ is zero.
+Which means that $I$ is only non-zero if a singular point is present in S. [@herlin2012reconstruction]
+This singular point is exactly what a rotor tip or spiral core is being identified with.
+
+## Properties of the phase index
+
+The topological charge is calculated using [@davidsen2004topological]
+
+Since the phase index is an integer and the manifold is differentiable,
+the curve can be continuously deformed without altering the phase index.
+Therefore, the phase index is conserved for continuous deformations,
+which is why it is called a topological charge.
+
+## Detecting rotational activity in cardiac tissue
+
+Rotational activity is one of the [mechanisms behind cardiac arrhythmias](20240212155412),
+and it is therefore important to accurately localize such activity in cardiac tissue.
+A standard method for this, is called phasemapping
+where cardiac activation maps are scanned across the map with a small area
+and the [topological charge](20250625034014) is computed along the circumference of this area.
+
+Besides phasemapping, there exists other methods such as:
+
+- [Backtracking]()
+- [Waveback -and front intersection points]()
+
+Since the phase space of cardiac tissue can exhibit interfaces or defects,
+it is not necessarily guaranteed that phasemapping and waveback -and front intersection points give the correct analysis.
+This could explain the reason why using different thresholds to count phase jumps,
+gives different results. (LINK!!!)
+
+For backtracking, phase defects are not a problem, as it will inherently go around them.
+However, this method is probably incapable of detecting near-complete rotations.
+
+Equivalent to topological charges, we could also count the number of [phase jumps]().
 
 # Methods
 
-A qualtative description of our methods is given below.
-Readers who would like to reproduce our results are referred to this GitHub repository (LINK!!!).
+A qualitative description of our methods is given below.
+Readers who would like to reproduce our results are referred to this GitHub repository (LINK!!!),
+which contains the used code and some further explanation.
 
 1. Create the simulation using finitewave (CITE !!!), Aliev-Panfilov model. [@aliev1996a]
    The simulation should contain:
