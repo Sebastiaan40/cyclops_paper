@@ -81,3 +81,8 @@ Readers who would like to reproduce our results are referred to this GitHub repo
 - Properly addressing phase defects and adapting the curve can make phasemapping
   suitable for analysing clinical cases.
 - Refer to preregistration.
+
+This paper is meant to serve as a theoretical backbone to understand
+how phasemapping can be used in a clinical setting.
+Researcher who are interested in testing these ideas,
+can have a look at our preregistration (LINK!!!).
