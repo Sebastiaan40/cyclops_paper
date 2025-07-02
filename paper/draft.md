@@ -27,22 +27,39 @@ and demonstrate how each of them can be addressed.
 
 # Methods
 
-- What is phase?
-- The phase index and its properties
-- Standard phasemapping method
-- Simulation
+A qualtative description of our methods is given below.
+Readers who would like to reproduce our results are referred to this GitHub repository (LINK!!!).
+
+1. Create the simulation using finitewave (CITE !!!), Aliev-Panfilov model. [@aliev1996a]
+   The simulation should contain:
+
+   - Two boundaries that are connected to each other with an unknown ablation line
+   - A boundary that has a functional block attached to it
+
+2. construct the phase field for the simulation from the u and v parameters
+   (it might be better to construct it using a time delay so that no knowledge of the aliev panfilov model is needed)
+   --> show a phasemap of a single cell
+
+3. Standard phasemapping algorithm (look up summary paper of phasemapping)
+
+4. Localize the phase defects by setting a threshold on the maximum difference of between neighboring phases.
+   (check if this can be done analytically, what is the maximal difference at each time step?)
+
+5. Repeat the standard phasemapping algorithm,
+   but now all cycles that have a phase defect are removed
+   and new cycles that surround the phase defects are added
 
 **Climax**
 
 # Results
 
+- Add workflow diagram with both the standard and extended method
 - First step: standard method
 - Second step: removing edges that go through phase defects
-- Third step: going around phase defects
 
 # Discussion
 
-- Showcase clinical relevance.
+- Showcase clinical relevance. [@duytschaever2024atrial, @santucci2024identification, @takigawa2019a]
 - Limitations: simulation instead of clinical case, phase is necessary to know
   --> We can use the signals or LATs if needed
 - Paper arno2023 --> even more impractical for clinical cases
@@ -61,5 +78,6 @@ and demonstrate how each of them can be addressed.
 
 # Conclusion
 
-- Properly addressing phasedefects and adapting the curve can make phasemapping
-  suitable for analysing clinical cases. Refer to preregistration.
+- Properly addressing phase defects and adapting the curve can make phasemapping
+  suitable for analysing clinical cases.
+- Refer to preregistration.
