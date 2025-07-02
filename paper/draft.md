@@ -11,7 +11,36 @@ and demonstrate how each of them can be addressed.
 
 # Introduction
 
-**Action**
+Consider the following clinical case:
+A patient suffers from atrial fibrillation and pulmonary vein isolation (PVI) is performed.
+After PVI, the fibrillation converts to atrial tachycardia
+and the patient is further treated by performing a roof ablation.
+Therefore, the left and right pulmonary veins can be considered as one non-conductive region.
+However, the tachycardia doesn't terminate
+and in order to decide the next treatment step,
+an activation map is made.
+
+This activation map is shown in Figure (REF)
+and by visual inspecting the map,
+rotational activity can be identified around the mitral valve and the atrial roof.
+We do not consider visual inspection as an optimal solution as it is subject to human mistakes.
+Instead, it would much more preferable to have a tool
+that would act as some kind of spell check where the error,
+in this case the rotational activity, is highlighted.
+
+A potential candidate for such tool is called phasemapping,
+which will be discussed in the next section.
+However, we will show that a standard implementation of phasemapping is not capable
+of analysing a map with large non-conductive regions and/or conductive blocks,
+such as the activation map described above.
+And it is not because the idea behind phasemapping is lacking.
+Rather, it's because the standard implementation mistreats such maps.
+
+In this paper, we will summarize the idea behind phasemapping,
+putting emphasis on the requirements for which the standard implementation gives the correct result.
+We will then formally define conductive blocks and
+showcase how to extend standard phasemapping
+in order to treat conductive block and non-conductive regions properly.
 
 - Introduce the simulation
 - Refer to analysis with standard phasemapping
