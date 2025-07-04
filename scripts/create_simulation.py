@@ -1,25 +1,29 @@
 import finitewave as fw
+import numpy as np
 
 if __name__ == "__main__":
     # set up the tissue:
-    n = 256
+    n = 128
     tissue = fw.CardiacTissue2D([n, n])
 
     # non-conductive regions
-    tissue.mesh[n // 4 - 16 : n // 4 + 16, n // 4 - 16 : n // 4 + 16] = 0
-    tissue.mesh[3 * n // 4 - 16 : 3 * n // 4 + 16, n // 2 - 16 : n // 2 + 16] = 0
+    # tissue.mesh[n // 4 - 16 : n // 4 + 16, n // 4 - 16 : n // 4 + 16] = 0
+    tissue.mesh[3 * n // 4 - 8 : 3 * n // 4 + 8, n // 4 - 8 : n // 4 + 8] = 0
+
+    tissue.conductivity = np.ones_like(tissue.mesh)
+    tissue.conductivity[3 * n // 4 - 8 : 3 * n // 4 - 6, n // 4 + 8 : n // 2] = 0.1
 
     # set up stimulation parameters:
     stim_sequence = fw.StimSequence()
 
     s1 = fw.StimVoltageCoord2D(time=0, volt_value=1, x1=0, x2=-1, y1=0, y2=5)
     s2 = fw.StimVoltageCoord2D(
-        time=52,
+        time=48,
         volt_value=1,
-        x1=3 * n // 4 + 16,
+        x1=3 * n // 4 + 8,
         x2=-1,
-        y1=n // 2,
-        y2=n // 2 + 16,
+        y1=n // 4,
+        y2=n // 4 + 8,
     )
     stim_sequence.add_stim(s1)
     stim_sequence.add_stim(s2)
@@ -36,6 +40,7 @@ if __name__ == "__main__":
     # create model object:
     model = fw.AlievPanfilov2D()
     # set up numerical parameters:
+    model.eap = 0.002
     model.dt = 0.01
     model.dr = 0.3
     model.t_max = 150
