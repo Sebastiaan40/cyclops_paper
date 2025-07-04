@@ -8,10 +8,16 @@ if __name__ == "__main__":
 
     # non-conductive regions
     # tissue.mesh[n // 4 - 16 : n // 4 + 16, n // 4 - 16 : n // 4 + 16] = 0
-    tissue.mesh[3 * n // 4 - 8 : 3 * n // 4 + 8, n // 4 - 8 : n // 4 + 8] = 0
+    tissue.mesh[3 * n // 4 - 8 : 3 * n // 4 + 8, n // 4 - 8 : n // 4 + 32] = 0
 
-    tissue.conductivity = np.ones_like(tissue.mesh)
-    tissue.conductivity[3 * n // 4 - 8 : 3 * n // 4 - 6, n // 4 + 8 : n // 2] = 0.1
+    tissue.conductivity = np.ones_like(tissue.mesh, dtype=float)
+    slow_zone = np.ones((16, 24)) * np.nan
+
+    gradient = np.linspace(0.1, 1.0, 24)
+    for i, val in enumerate(gradient):
+        slow_zone[:, i] = val
+
+    tissue.conductivity[3 * n // 4 - 32 : 3 * n // 4 + 8, n // 4 - 8 : n // 4 + 32] = 0.1
 
     # set up stimulation parameters:
     stim_sequence = fw.StimSequence()
