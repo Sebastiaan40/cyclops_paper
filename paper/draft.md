@@ -11,6 +11,8 @@ and demonstrate how each of them can be addressed.
 
 # Introduction
 
+Adjust this to focus on cardiac modelers how use phasemapping.
+
 Consider the following clinical case:
 A patient suffers from atrial fibrillation and pulmonary vein isolation (PVI) is performed.
 After PVI, the fibrillation converts to atrial tachycardia
@@ -21,7 +23,7 @@ and in order to decide the next treatment step,
 an activation map is made.
 
 This activation map is shown in Figure (REF)
-and by visual inspecting the map,
+and by visually inspecting the map,
 rotational activity can be identified around the mitral valve and the atrial roof.
 We do not consider visual inspection as an optimal solution as it is subject to human mistakes.
 Instead, it would much more preferable to have a tool
@@ -44,25 +46,29 @@ in order to treat conductive block and non-conductive regions properly.
 
 # Theory
 
-## What is phase?
-
-## What is a phase defect or conduction block
-
 ## What is the phase index?
 
 When analyzing an electroanatomical map,
 we often want to know if there is some rotational activity present,
 since this is one of the mechanisms behind cardiac arrhythmia.
 To express rotational activity a bit more quantitative,
-we can state that, if there is a closed curve C around which
+we can state that, if there is a closed curve $C$ around which
 the electrical excitation travels,
 there is rotational activity across that curve.
 
-We can get an even clearer expression if we look at the phase field $\Phi(x, t)$
-in a two-dimensional orientable manifold M (e.g. a plane or the surface of a sphere).
-Suppose that $\Phi$ is smooth across $C$,
-and we follow it along C until we end up back at the starting point.
-The value will now be the same, or it will be shifted by $2\pi$.
+We can get an even clearer expression
+if we describe the state of each point at a certain time with a single variable.
+Considering that the state of each point changes periodically,
+the variable can be any scalar that is lying onto the unit circle.
+This variable is referred to as the phase $\Phi$.
+
+For a phase field $\Phi(x, t)$,
+which describes the state of each point in a two-dimensional orientable manifold M (e.g. a plane or the surface of a sphere),
+it hold that
+if $\Phi$ is smooth across $C$,
+and we follow $\Phi$ along $C$ until we end up back at the starting point,
+The value will now be the same,
+or it will be shifted by $2\pi$.
 This expression can also be written down in a mathematical formula.
 
 $$
@@ -81,6 +87,10 @@ In case $\Phi$ is differentiable across S,
 the index $I$ is zero.
 Which means that $I$ is only non-zero if a singular point is present in S. [@herlin2012reconstruction]
 This singular point is exactly what a rotor tip or spiral core is being identified with.
+
+## What is a phase defect or conduction block
+
+- Explanation of phase defect [@arno2021a]
 
 ## Properties of the phase index
 
@@ -127,7 +137,7 @@ which contains the used code and some further explanation.
    - A boundary that has a functional block attached to it
 
 2. construct the phase field for the simulation from the u and v parameters
-   (it might be better to construct it using a time delay so that no knowledge of the aliev panfilov model is needed)
+   Using Hilbert transform since this corresponds phase rotation[@bray2002considerations]
    --> show a phasemap of a single cell
 
 3. Standard phasemapping algorithm (look up summary paper of phasemapping)
