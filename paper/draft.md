@@ -1,3 +1,10 @@
+---
+title: The problem with standard phasemapping
+author: Bjorn Verstraeten
+date: \today
+classoption: twocolumn
+---
+
 # Abstract
 
 Rotational activity is one of the mechanisms behind cardiac arrhythmias,
@@ -11,7 +18,7 @@ and demonstrate how each of them can be addressed.
 
 # Introduction
 
-Adjust this to focus on cardiac modelers how use phasemapping.
+<!-- Adjust this to focus on cardiac modelers how use phasemapping. -->
 
 Consider the following clinical case:
 A patient suffers from atrial fibrillation and pulmonary vein isolation (PVI) is performed.
@@ -47,6 +54,8 @@ in order to treat conductive block and non-conductive regions properly.
 # Theory
 
 ## What is the phase index?
+
+<!-- Strogatz could give some inspiration on how to explain this better -->
 
 When analyzing an electroanatomical map,
 we often want to know if there is some rotational activity present,
@@ -88,18 +97,64 @@ the index $I$ is zero.
 Which means that $I$ is only non-zero if a singular point is present in S. [@herlin2012reconstruction]
 This singular point is exactly what a rotor tip or spiral core is being identified with.
 
-## What is a phase defect or conduction block
-
-- Explanation of phase defect [@arno2021a]
-
 ## Properties of the phase index
 
-The topological charge is calculated using [@davidsen2004topological]
+The first thing we want you to notice,
+is that the phase index is a property of a closed curve.
+This can be any closed curve,
+but for our purposes, we will stick to closed curves that do not intersect themselves.
 
-Since the phase index is an integer and the manifold is differentiable,
+<!-- Check out how davidsen and strogatz explain this -->
+
+Secondly, since the phase index is an integer and the manifold is differentiable,
 the curve can be continuously deformed without altering the phase index.
 Therefore, the phase index is conserved for continuous deformations,
 which is why it is called a topological charge.
+This property allows us to identify a phase index to a singular point as follows:
+The phase index of a singular point is the phase index of any closed curve that surrounds that point and nothing else.
+
+<!-- Figure idea: draw multiple curves around a point -->
+
+This idea can be generalized by stating that the phase index of a closed curve is equal to the total phase index of everything in that curve.
+For example, if we draw a curve around multiple singular points $x_1$, ..., $x_N$,
+the phase index $I_C$ of the curve is equal to that of the sum of the phase indices $I_n$ of all singular points inside.
+
+$$
+I_C = \sum^N_{n=1} I_n
+$$
+
+<!-- Figure idea: draw a curve around a multiple points -->
+
+To build further on this idea,
+suppose that we have defined a phase field $\Phi$ on a closed surface $S$.
+If we now draw a curve on that surface with nothing in it,
+its phase index will be zero.
+Since $S$ is a closed surface,
+this curve also encircles everything, and thus,
+we can write
+
+$$
+\sum_{x_n \in S} I(x_n) = 0
+$$
+
+This is the same as stating that the total topological charge is conserved on a closed surface.
+
+In order to extend this conservation law for surfaces with boundaries or holes
+we can imagine to fill up these holes to get a closed surface
+and use there boundaries as the closed curve to calculate the phase index.
+For a more thourough explanation we refer to [@herlin2012reconstruction, @davidsen2004topological].
+This extension then gives us the following equation:
+
+$$
+\sum_{x_n \in S} I(x_n) = \sum_{H_m \in S} I(H_m)
+$$
+
+where $x_n$ are the singular points in $S$ and $H_m$ are the holes.
+From now on we will refer to this as the index theorem.
+
+### What is a phase defect or conduction block
+
+- Explanation of phase defect [@arno2021a]
 
 ## Detecting rotational activity in cardiac tissue
 
