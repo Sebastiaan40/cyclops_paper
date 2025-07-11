@@ -27,7 +27,7 @@ tracker_sequence.add_tracker(action_pot_tracker)
 fenton_karma = fw.FentonKarma2D()
 fenton_karma.dt = 0.01
 fenton_karma.dr = 0.25
-fenton_karma.t_max = 2000
+fenton_karma.t_max = 1900
 
 # add the tissue and the stim parameters to the model object:
 fenton_karma.cardiac_tissue = tissue
