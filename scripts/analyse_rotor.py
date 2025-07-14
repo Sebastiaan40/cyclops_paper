@@ -41,16 +41,7 @@ action_pots[mask] = np.nan
 
 # calculate phases
 start = 200
-# time_delay = 50
-# delayed_action_pots = np.roll(action_pots, time_delay, axis=1)
-# action_pots -= np.nanmean(action_pots)
-# delayed_action_pots -= np.nanmean(delayed_action_pots)
-# phases = np.arctan2(action_pots, )[:, start:]
-phases = - 1 * np.angle(ss.hilbert(action_pots - 0.5))[:, start:]
-
-# plot trajectory of phase space of one point
-# plt.plot(action_pots[500, start:], delayed_action_pots[500, start:])
-# plt.show()
+phases = -1 * np.angle(ss.hilbert(action_pots - 0.5))[:, start:]
 
 # plot phase and action potential of one point
 plt.plot(phases[500])
