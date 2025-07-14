@@ -55,10 +55,11 @@ vertices = pd.concat((vertices, pd.DataFrame(phases, columns=columns)), axis=1)
 mesh = mt.Mesh(vertices, triangles)
 
 # run the extended phasemapping method
-mesh_filters = [mf.CellPhaseDiffFilter(0.05 * np.pi)]
+mesh_filters = [mf.CellPhaseDiffFilter(0.1 * np.pi)]
 epm = ExtendedPhaseMapping(mesh, mesh_filters)
 epm.run()
 
 # visualise results
 slider = vt.Slider(epm)
+slider.boundary_actors = slider.add_boundaries(0)
 slider.show()
