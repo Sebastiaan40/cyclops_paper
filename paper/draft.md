@@ -182,38 +182,59 @@ In other words, there is no way of analysing all points separatly and
 the next best thing that we can do,
 is calculating the phase index for the boundaries and the phase defect as a whole.
 
+<!-- A curve should be as small as possible, but as big as necessary. -->
+
 # Methods
 
-Besides phasemapping, there exists other methods such as:
+There exists a numeruous amount implementations and methods to detect rotational activity [@pikunov2023th, @gurevich2019robuste, @li2020standardizing]
+that it is almost impossible to create comparative study or full review.
+Therefore, we have decided to create a case study.
+We will analysis single simulation that contains boundaries and phase defects,
+and simple enough to visually confirm.
 
-- [Backtracking]()
-- [Waveback -and front intersection points @gurevich2019robust]
+## Setup of the Simulation
 
-Since the phase space of cardiac tissue can exhibit interfaces or defects,
-it is not necessarily guaranteed that phasemapping and waveback -and front intersection points give the correct analysis.
-This could explain the reason why using different thresholds to count phase jumps,
-gives different results. (LINK!!!)
+As it is not required to have realistic geometries to induce phase defects,
+We chose to create a simulation on a homogeneous 2D grid.
+This also has the benefit to get a full overview of the simulation at once
+and easily place snapshots in the paper.
 
-For backtracking, phase defects are not a problem, as it will inherently go around them.
-However, this method is probably incapable of detecting near-complete rotations.
+The simulation is created using Finitewave (<https://github.com/finitewave/Finitewave>),
+an open-source Python package for a wide range of tasks in modeling cardiac electrophysiology using finite-difference methods.
+The main argument for using Finitewave is its clear and transparent implementation of the models
+which allows us to verify its correctness.
+Furthermore, the intuitive interface and lots of examples make it easy to create, evaluate, and adjust simulations.
 
-Equivalent to topological charges, we could also count the number of [phase jumps]().
+The cell model used for the simulation is the Fenton-Karma model.
+Since the research question of this paper does not involve the effect of ionic channels on the dynamics,
+it is more fitting to use a phenomenological model which is less computationally heavy
+and has simpler cell dynamics.
+We choose the Fenton-Karma model specifically since it was the easiest to create phase defects without tweaking the model's parameters.
 
-A qualitative description of our methods is given below.
-Readers who would like to reproduce our results are referred to this GitHub repository (LINK!!!),
-which contains the used code and some further explanation.
+The 2D mesh is first pre-paced with 10 planar stimuli and an interval of 200 time steps between them.
+Next, a boundary is added inside the mesh
+and a second square stimulus is applied to induce rotational activity.
+To ensure that the rotor fits on the mesh, but without increasing computational time,
+we lowered the conductivity of the mesh.
+Finally, we added a phase defect using a third stimulus in a small region just before it goes out of refractory.
 
-1. Create the simulation using finitewave (CITE !!!), Aliev-Panfilov model. [@aliev1996a]
-   The simulation should contain:
+## Implementation of phasemapping
 
-   - Two boundaries that are connected to each other with an unknown ablation line
-   - A boundary that has a functional block attached to it
+To highlight the influence of phase defects and boundaries,
+we will compare two implementations of phasemapping:
+one where the simulation is scanned for singularities without adresing phase defects and ignoring boundaries,
+and another were we take into account phase defects and boundaries.
+This second implementation is basically an extension of the first one.
+
+## Naive Phasemapping
 
 2. construct the phase field for the simulation from the u and v parameters
-   Using Hilbert transform since this corresponds phase rotation[@bray2002considerations]
+   Using Hilbert transform since this corresponds phase rotation [@bray2002considerations]
    --> show a phasemap of a single cell
 
 3. Standard phasemapping algorithm (look up summary paper of phasemapping)
+
+## Extended phasemapping
 
 4. Localize the phase defects by setting a threshold on the maximum difference of between neighboring phases.
    (check if this can be done analytically, what is the maximal difference at each time step?)
@@ -221,6 +242,9 @@ which contains the used code and some further explanation.
 5. Repeat the standard phasemapping algorithm,
    but now all cycles that have a phase defect are removed
    and new cycles that surround the phase defects are added
+
+Readers who would like to reproduce our results are referred to this GitHub repository (LINK!!!),
+which contains the used code and some further explanation.
 
 # Results
 
@@ -249,7 +273,17 @@ which contains the used code and some further explanation.
   the discontinuity disappears when the wavefront is moving away from it.
   However, the next wave still can't pass through it.
 
-[@li2020standardizing, ]
+Besides phasemapping, there exists other methods such as:
+
+Since the phase space of cardiac tissue can exhibit interfaces or defects,
+it is not necessarily guaranteed that phasemapping and waveback -and front intersection points give the correct analysis.
+This could explain the reason why using different thresholds to count phase jumps,
+gives different results. (LINK!!!)
+
+For backtracking, phase defects are not a problem, as it will inherently go around them.
+However, this method is probably incapable of detecting near-complete rotations.
+
+Equivalent to topological charges, we could also count the number of [phase jumps]().
 
 <!-- might be wrong since they don't integrate -->
 
@@ -265,6 +299,7 @@ which means that it cannot calculate the phase index over phase defects.
 - Refer to preregistration.
 - Additionaly, we encourage research groups to try out this simple example
   to see whether their detection method can analyse this map correctly.
+  However, keep in mind Goodhart's Law
 
 This paper is meant to serve as a theoretical backbone to understand
 how phasemapping can be used in a clinical setting.
