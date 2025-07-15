@@ -2,7 +2,6 @@ from pathlib import Path
 
 import cyclops.meshtools as mt
 import cyclops.meshtools.filters as mf
-import cyclops.parsetools as pt
 import cyclops.visualtools as vt
 import matplotlib.pyplot as plt
 import numpy as np
@@ -30,7 +29,7 @@ columns = pd.MultiIndex.from_product([["faces"], ["vertex_0", "vertex_1", "verte
 triangles = pd.DataFrame(faces, columns=columns)
 
 # load action potentials
-jump = 50
+jump = 10
 list_of_action_pots = []
 for file in files[1::jump]:
     list_of_action_pots.append(np.load(file).ravel())
@@ -43,6 +42,7 @@ action_pots[mask] = np.nan
 start = 50
 hilbert = ss.hilbert(action_pots - np.nanmean(action_pots))
 phases = -1 * np.angle(-1j * hilbert)[:, start:]
+phases = np.pi * np.tanh(phases)
 
 # plot phase and action potential of one point
 plt.plot(phases[500])
@@ -55,7 +55,7 @@ vertices = pd.concat((vertices, pd.DataFrame(phases, columns=columns)), axis=1)
 mesh = mt.Mesh(vertices, triangles)
 
 # run the extended phasemapping method
-mesh_filters = [mf.CellPhaseDiffFilter(0.1 * np.pi)]
+mesh_filters = [mf.CellPhaseDiffFilter(0.05 * np.pi)]
 epm = ExtendedPhaseMapping(mesh, mesh_filters)
 epm.run()
 
