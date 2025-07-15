@@ -89,7 +89,7 @@ Using Stokes' theorem,
 the phase index can also be written as
 
 $$
-I = \frac{1}{2\pi} \int\int_S \nabla \times (\nabla \Phi) \cdot dS
+I = \frac{1}{2\pi} \iint_S \nabla \times (\nabla \Phi) \cdot dS
 $$
 
 In case $\Phi$ is differentiable across S,
@@ -141,8 +141,8 @@ This is the same as stating that the total topological charge is conserved on a 
 
 In order to extend this conservation law for surfaces with boundaries or holes
 we can imagine to fill up these holes to get a closed surface
-and use there boundaries as the closed curve to calculate the phase index.
-For a more thourough explanation we refer to [@herlin2012reconstruction, @davidsen2004topological].
+and use their boundaries as the closed curve to calculate the phase index.
+For a more thorough explanation we refer to [@herlin2012reconstruction, @davidsen2004topological].
 This extension then gives us the following equation:
 
 $$
@@ -152,22 +152,42 @@ $$
 where $x_n$ are the singular points in $S$ and $H_m$ are the holes.
 From now on we will refer to this as the index theorem.
 
-### What is a phase defect or conduction block
+### How to handle conduction blocks or phase defects
 
-- Explanation of phase defect [@arno2021a]
+So far we have defined the phase index for singular points and holes,
+but now we need to remind ourselves about which requirements need to be fulfilled
+in order to do so.
+For our purposes, the most important one is that the phase field needs to be smooth across the closed curve.
+One example where this is not fulfilled are singular points.
+Another example that applies to cardiac tissue is when the wavefront of the excitation wave hits a refractory region.
+This forms a discontinuity or defect in the form of a line.
+A full discussion about this phenomena can be found in [@tomii2021spatial],
+but for our purpose it is enough to define a phase defect as a discontinuity in the phase field.
 
 ## Detecting rotational activity in cardiac tissue
 
-Rotational activity is one of the [mechanisms behind cardiac arrhythmias](20240212155412),
-and it is therefore important to accurately localize such activity in cardiac tissue.
-A standard method for this, is called phasemapping
-where cardiac activation maps are scanned across the map with a small area
-and the [topological charge](20250625034014) is computed along the circumference of this area.
+A well-known method that exploits the idea of phase indices is called phasemapping.
+With phasemapping, the cardiac activation map is scanned across with a small area
+and the phase index is computed along the circumference of this area.
+Since method is mostly used while analysising rotors,
+the scanning area is made as small as possible in order to ensure
+that only one singular point lies within the area.
+
+We argue that using phasemapping will give a incomplete analysis
+because the cardiac can have phase defects and boundaries
+for which the points that lie on them cannot be properly analysed using this method
+Figure (LINK) shows that you cannot draw a closed curve soley around such points
+that is smooth.
+In other words, there is no way of analysing all points separatly and
+the next best thing that we can do,
+is calculating the phase index for the boundaries and the phase defect as a whole.
+
+# Methods
 
 Besides phasemapping, there exists other methods such as:
 
 - [Backtracking]()
-- [Waveback -and front intersection points]()
+- [Waveback -and front intersection points @gurevich2019robust]
 
 Since the phase space of cardiac tissue can exhibit interfaces or defects,
 it is not necessarily guaranteed that phasemapping and waveback -and front intersection points give the correct analysis.
@@ -178,8 +198,6 @@ For backtracking, phase defects are not a problem, as it will inherently go arou
 However, this method is probably incapable of detecting near-complete rotations.
 
 Equivalent to topological charges, we could also count the number of [phase jumps]().
-
-# Methods
 
 A qualitative description of our methods is given below.
 Readers who would like to reproduce our results are referred to this GitHub repository (LINK!!!),
@@ -204,8 +222,6 @@ which contains the used code and some further explanation.
    but now all cycles that have a phase defect are removed
    and new cycles that surround the phase defects are added
 
-**Climax**
-
 # Results
 
 - Add workflow diagram with both the standard and extended method
@@ -228,6 +244,17 @@ which contains the used code and some further explanation.
 - Comparison with different methods (back-tracking, intersection points)
   --> back-tracking cannot find near-complete rotations
   --> intersection points are the same as phasemapping
+- Limitation: while defining a phase defect as a discontinuity is fine,
+  it does not tell the whole story. For example, looking at the fork,
+  the discontinuity disappears when the wavefront is moving away from it.
+  However, the next wave still can't pass through it.
+
+[@li2020standardizing, ]
+
+<!-- might be wrong since they don't integrate -->
+
+The kernel method requires that the full region is smooth,
+which means that it cannot calculate the phase index over phase defects.
 
 **Ending**
 
@@ -236,6 +263,8 @@ which contains the used code and some further explanation.
 - Properly addressing phase defects and adapting the curve can make phasemapping
   suitable for analysing clinical cases.
 - Refer to preregistration.
+- Additionaly, we encourage research groups to try out this simple example
+  to see whether their detection method can analyse this map correctly.
 
 This paper is meant to serve as a theoretical backbone to understand
 how phasemapping can be used in a clinical setting.
