@@ -8,7 +8,7 @@ classoption: twocolumn
 # Abstract
 
 Rotational activity is one of the mechanisms behind cardiac arrhythmias,
-and it is therefore important to accurately localize such activity in cardiac tissue.
+and it is therefore important to accurately localise such activity in cardiac tissue.
 A standard method for this, is called phasemapping.
 While widely used for analysing rotors in cardiac simulations,
 phasemapping struggles to correctly analyse activation maps with large non-conductive regions
@@ -192,6 +192,10 @@ Therefore, we have decided to create a case study.
 We will analysis single simulation that contains boundaries and phase defects,
 and simple enough to visually confirm.
 
+Below we will give a qualitative description of our methods
+Readers who would like to reproduce our results are referred to this GitHub repository (LINK!!!),
+which contains the used code and some further explanation.
+
 ## Setup of the Simulation
 
 As it is not required to have realistic geometries to induce phase defects,
@@ -244,22 +248,27 @@ but triangulated meshes are quite common and choosing so, made the code simpler.
 For any polygon, the phase index can be calculated by counting the number of phase jumps.
 An algorithm for this will look like:
 
-1. Compute the phase difference $\delta\Phi$ of all edges.
-2. Count the number of times $\delta\Phi$ is bigger than $\pi$ (positive phase jump).
-3. Count the number of times $\delta\Phi$ is smaller than $-\pi$ (negative phase jump).
+1. Compute the phase difference $\Delta\Phi$ of all edges.
+2. Count the number of times $\Delta\Phi$ is bigger than $\pi$ (positive phase jump).
+3. Count the number of times $\Delta\Phi$ is smaller than $-\pi$ (negative phase jump).
 4. Calculate the index with $I = P - N$ with $P$ and $N$ the number of positive and negative phase jumps respectively.
 
-## Extended phasemapping
+## Extended Phasemapping
 
-4. Localize the phase defects by setting a threshold on the maximum difference of between neighboring phases.
-   (check if this can be done analytically, what is the maximal difference at each time step?)
+To extend the naive approach, the first thing to do is localising the phase defects.
+Remember that phase defects are defined as discontinuities in the phase field.
+In a triangulated mesh this would manifest as a big phase difference on the edges.
+Therefore, the most straightforward thing to do is setting a threshold $d$ so that an edge with a phase difference $\Delta\Phi$
+that satisfies $d<\Delta\Phi<2\pi-d$ would be considered as a phase defect.
+We have found that a value of $d=0.08\pi$ works best for this simulation,
+but keep in mind that this threshold depends highly on the parameters of the simulation.
 
-5. Repeat the standard phasemapping algorithm,
-   but now all cycles that have a phase defect are removed
-   and new cycles that surround the phase defects are added
+Once all phase defects are located,
+the cells that contain at least one phase defect are removed.
+This will create holes in the mesh, allowing us to treat phase defect and boundaries as the same.
 
-Readers who would like to reproduce our results are referred to this GitHub repository (LINK!!!),
-which contains the used code and some further explanation.
+Finally, the boundaries and holes are extracted as polygons.
+The naive phasemapping approach (see previous section) is then applied to these polygons together with the remaining cells.
 
 # Results
 
