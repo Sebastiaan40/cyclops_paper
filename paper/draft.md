@@ -1,5 +1,5 @@
 ---
-title: The problem with standard phasemapping
+title: How phase defects and boundaries can mess up phasemapping
 author: Bjorn Verstraeten
 date: \today
 classoption: twocolumn
@@ -222,17 +222,32 @@ Finally, we added a phase defect using a third stimulus in a small region just b
 
 To highlight the influence of phase defects and boundaries,
 we will compare two implementations of phasemapping:
-one where the simulation is scanned for singularities without adresing phase defects and ignoring boundaries,
+one where the simulation is scanned for singularities without addressing phase defects and ignoring boundaries,
+which we will refer to as naive phasemapping,
 and another were we take into account phase defects and boundaries.
-This second implementation is basically an extension of the first one.
+This second implementation is basically an extension of the first one,
+so we will refer to it as extended phasemapping.
 
 ## Naive Phasemapping
 
-2. construct the phase field for the simulation from the u and v parameters
-   Using Hilbert transform since this corresponds phase rotation [@bray2002considerations]
-   --> show a phasemap of a single cell
+The first step was to convert the action potential to a phase field.
+This was done using taking the angle Hilbert transform of the action potential as suggested by [@bray2002considerations].
+Additionally, we made sure that the peak of the action potential corresponds to $\pi$ (see Figure LINK),
+so that it becomes straightforward to compare the phase field with the action potential.
 
-3. Standard phasemapping algorithm (look up summary paper of phasemapping)
+Next, we will create a triangulated mesh and compute the phase index for each triangle at each time step.
+In theory, the cells of the mesh could be any polygon,
+but triangulated meshes are quite common and choosing so, made the code simpler.
+
+<!-- Find references for this method or a formal definition of phase jumps -->
+
+For any polygon, the phase index can be calculated by counting the number of phase jumps.
+An algorithm for this will look like:
+
+1. Compute the phase difference $\delta\Phi$ of all edges.
+2. Count the number of times $\delta\Phi$ is bigger than $\pi$ (positive phase jump).
+3. Count the number of times $\delta\Phi$ is smaller than $-\pi$ (negative phase jump).
+4. Calculate the index with $I = P - N$ with $P$ and $N$ the number of positive and negative phase jumps respectively.
 
 ## Extended phasemapping
 
