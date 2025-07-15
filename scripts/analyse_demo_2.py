@@ -42,7 +42,6 @@ action_pots[mask] = np.nan
 start = 50
 hilbert = ss.hilbert(action_pots - np.nanmean(action_pots))
 phases = -1 * np.angle(-1j * hilbert)[:, start:]
-phases = np.pi * np.tanh(phases)
 
 # plot phase and action potential of one point
 plt.plot(phases[500])
@@ -55,7 +54,7 @@ vertices = pd.concat((vertices, pd.DataFrame(phases, columns=columns)), axis=1)
 mesh = mt.Mesh(vertices, triangles)
 
 # run the extended phasemapping method
-mesh_filters = [mf.CellPhaseDiffFilter(0.05 * np.pi)]
+mesh_filters = [mf.CellPhaseDiffFilter(0.07 * np.pi)]
 epm = ExtendedPhaseMapping(mesh, mesh_filters)
 epm.run()
 
