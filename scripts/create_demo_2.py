@@ -18,16 +18,10 @@ plt.show()
 stim_sequence = fw.StimSequence()
 s2 = fw.StimVoltageCoord2D(60, 1, n // 4, 3 * n // 4, 0, n // 2)
 stim_sequence.add_stim(s2)
-
 s3 = fw.StimVoltageCoord2D(
-    320, 1, 3 * n // 4 - 64, 3 * n // 4 + 64, 3 * n // 4, 3 * n // 4 + 8
-)
-stim_sequence.add_stim(s3)
-
-s4 = fw.StimVoltageCoord2D(
     640, 1, 3 * n // 4 - 64, 3 * n // 4 + 64, 3 * n // 4, 3 * n // 4 + 8
 )
-stim_sequence.add_stim(s4)
+stim_sequence.add_stim(s3)
 
 # set up tracker:
 tracker_sequence = fw.TrackerSequence()
@@ -42,7 +36,7 @@ tracker_sequence.add_tracker(animation_tracker)
 fenton_karma = fw.FentonKarma2D()
 fenton_karma.dt = 0.01
 fenton_karma.dr = 0.25
-fenton_karma.t_max = 2000
+fenton_karma.t_max = 1000
 
 # add the tissue and the stim parameters to the model object:
 fenton_karma.cardiac_tissue = tissue
