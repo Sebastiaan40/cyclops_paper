@@ -30,7 +30,7 @@ columns = pd.MultiIndex.from_product([["faces"], ["vertex_0", "vertex_1", "verte
 triangles = pd.DataFrame(faces, columns=columns)
 
 # load action potentials
-jump = 10
+jump = 30
 list_of_action_pots = []
 for file in files[1::jump]:
     list_of_action_pots.append(np.load(file).ravel())
