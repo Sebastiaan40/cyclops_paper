@@ -29,9 +29,10 @@ columns = pd.MultiIndex.from_product([["faces"], ["vertex_0", "vertex_1", "verte
 triangles = pd.DataFrame(faces, columns=columns)
 
 # load action potentials
-jump = 10
+jump = 4
+start = 2800
 list_of_action_pots = []
-for file in files[1::jump]:
+for file in files[start::jump]:
     list_of_action_pots.append(np.load(file).ravel())
 
 action_pots = np.column_stack(list_of_action_pots)
@@ -39,13 +40,14 @@ mask = np.all(action_pots == action_pots[:, 0, None], axis=1)
 action_pots[mask] = np.nan
 
 # calculate phases
-start = 50
+start= 50
+stop = 500
 hilbert = ss.hilbert(action_pots - np.nanmean(action_pots))
-phases = -1 * np.angle(-1j * hilbert)[:, start:]
+phases = -1 * np.angle(-1j * hilbert)[:, :stop]
 
 # plot phase and action potential of one point
 plt.plot(phases[500])
-plt.plot(action_pots[500, start:])
+plt.plot(action_pots[500, :stop])
 plt.show()
 
 # create mesh
@@ -54,7 +56,7 @@ vertices = pd.concat((vertices, pd.DataFrame(phases, columns=columns)), axis=1)
 mesh = mt.Mesh(vertices, triangles)
 
 # run the extended phasemapping method
-mesh_filters = [mf.CellPhaseDiffFilter(0.07 * np.pi)]
+mesh_filters = [mf.CellPhaseDiffFilter(0.06 * np.pi)]
 epm = ExtendedPhaseMapping(mesh, mesh_filters)
 epm.run()
 
@@ -62,3 +64,18 @@ epm.run()
 slider = vt.Slider(epm)
 slider.boundary_actors = slider.add_boundaries(0)
 slider.show()
+
+# Create phase density map
+data = [epm.critical_cycles]
+nodes = (
+    pd.concat(data)
+    .groupby("time_axis")["nodes"]
+    .apply(lambda nodes: [x for xs in nodes for x in xs])
+)
+
+nodes_per_time_step = nodes.apply(np.unique).to_list()
+point_ids, count = np.unique(np.concatenate(nodes_per_time_step), return_counts=True)
+all_points = np.zeros(nx * ny)
+all_points[point_ids] = np.log(count)
+plt.imshow(all_points.reshape(nx, ny))
+plt.show()
