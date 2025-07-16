@@ -56,6 +56,8 @@ discontinuities and boundaries that do not show any rotation are annotated in wh
 
 # Theory
 
+<!-- Is this part redundant. Should it be made smaller? -->
+
 ## What is the phase index?
 
 <!-- Strogatz could give some inspiration on how to explain this better -->
@@ -116,8 +118,6 @@ which is why it is called a topological charge.
 This property allows us to identify a phase index to a singular point as follows:
 The phase index of a singular point is the phase index of any closed curve that surrounds that point and nothing else.
 
-<!-- Figure idea: draw multiple curves around a point -->
-
 This idea can be generalized by stating that the phase index of a closed curve is equal to the total phase index of everything in that curve.
 For example, if we draw a curve around multiple singular points $x_1$, ..., $x_N$,
 the phase index $I_C$ of the curve is equal to that of the sum of the phase indices $I_n$ of all singular points inside.
@@ -125,8 +125,6 @@ the phase index $I_C$ of the curve is equal to that of the sum of the phase indi
 $$
 I_C = \sum^N_{n=1} I_n
 $$
-
-<!-- Figure idea: draw a curve around a multiple points -->
 
 To build further on this idea,
 suppose that we have defined a phase field $\Phi$ on a closed surface $S$.
@@ -167,12 +165,28 @@ This forms a discontinuity or defect in the form of a line.
 A full discussion about this phenomena can be found in [@tomii2021spatial],
 but for our purpose it is enough to define a phase defect as a discontinuity in the phase field.
 
+Figure~LINK show an example on how to adjust the curves when phase defects and holes are present.
+
+![Example of a bounded planar domain with holes.
+The domain contains singular points at $\pmb{x}_1$, ..., $\pmb{x}_n$
+and holes $H_1$, ... $H_{m-1}$, with the outer boundary representing the final hole $H_m$.
+Curves are drawn around each singular point and hole with the arrow represent the direction of integration.
+In addition, a phase defect is presented together with a curve over which to integrate to get the phase index of the defect.](figures/index_calculation.pdf)
+
+a bounded planar
+domain with holes. In the domain S, n phase singularities are located
+at x1 , . . . ,xn and encircled by closed contours 1 , . . . ,n ; h holes
+and boundaries H1 , . . . ,Hh are present, the last one being the exterior
+boundary (if any); arrows show the orientation of the contours k and
+Hk ; and inside each hole Hk , a “virtual” phase singularity is placed
+at xn+k and is encircled by the closed contour n+k .
+
 ## Detecting rotational activity in cardiac tissue
 
 A well-known method that exploits the idea of phase indices is called phasemapping.
 With phasemapping, the cardiac activation map is scanned across with a small area
 and the phase index is computed along the circumference of this area.
-Since method is mostly used while analysising rotors,
+Since method is mostly used while analysing rotors,
 the scanning area is made as small as possible in order to ensure
 that only one singular point lies within the area.
 
@@ -195,9 +209,6 @@ Therefore, we have decided to create a case study.
 We will analysis single simulation that contains boundaries and phase defects,
 and simple enough to visually confirm.
 
-Below we will give a qualitative description of our methods
-Readers who would like to reproduce our results are referred to this GitHub repository (LINK!!!),
-which contains the used code and some further explanation.
 
 ## Setup of the Simulation
 
@@ -332,3 +343,12 @@ This paper is meant to serve as a theoretical backbone to understand
 how phasemapping can be used in a clinical setting.
 Researcher who are interested in testing these ideas,
 can have a look at our preregistration (LINK!!!).
+
+# Data availability
+
+- github: code + source code
+- zenodo: figures, simulation data, video
+- osf: preregistration
+
+Readers who would like to reproduce our results are referred to this GitHub repository (LINK!!!),
+which contains the used code and some further explanation.
