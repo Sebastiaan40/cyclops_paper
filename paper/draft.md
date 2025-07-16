@@ -18,38 +18,41 @@ and demonstrate how each of them can be addressed.
 
 # Introduction
 
-<!-- Adjust this to focus on cardiac modelers how use phasemapping. -->
+Consider the simulation in Figure~LINK.
+By visually inspecting the map,
+a linear rotor appears to turn counterclockwise in the bottom left [@arno2021a].
+Looking at the bottom right,
+you can see two wavefronts soon to collide with each other.
+At the top we find a more complex pattern.
+There is a non-conductive region around which three wavefront are moving.
+One might recognize this pattern as a critical boundary with near-complete rotation;
+a pattern that plays an important role during ablation therapy [@duytschaever2024atrial, @santucci2024identification].
 
-Consider the following clinical case:
-A patient suffers from atrial fibrillation and pulmonary vein isolation (PVI) is performed.
-After PVI, the fibrillation converts to atrial tachycardia
-and the patient is further treated by performing a roof ablation.
-Therefore, the left and right pulmonary veins can be considered as one non-conductive region.
-However, the tachycardia doesn't terminate
-and in order to decide the next treatment step,
-an activation map is made.
-
-This activation map is shown in Figure (REF)
-and by visually inspecting the map,
-rotational activity can be identified around the mitral valve and the atrial roof.
-We do not consider visual inspection as an optimal solution as it is subject to human mistakes.
+While for this simple simulation, a visual inspection is reasonable,
+it is not considered as an optimal solution as it is subject to human mistakes.
 Instead, it would much more preferable to have a tool
 that would act as some kind of spell check where the error,
 in this case the rotational activity, is highlighted.
 
 A potential candidate for such tool is called phasemapping,
 which will be discussed in the next section.
-However, we will show that a standard implementation of phasemapping is not capable
+However, we will show that a naive implementation of phasemapping is not capable
 of analysing a map with large non-conductive regions and/or conductive blocks,
-such as the activation map described above.
+such as the phase map described above.
 And it is not because the idea behind phasemapping is lacking.
-Rather, it's because the standard implementation mistreats such maps.
+Rather, it's because a naive approach mistreats such maps.
 
 In this paper, we will summarize the idea behind phasemapping,
 putting emphasis on the requirements for which the standard implementation gives the correct result.
 We will then formally define conductive blocks and
 showcase how to extend standard phasemapping
 in order to treat conductive block and non-conductive regions properly.
+
+![Snapshot of a simulation with the Fenton-Karma model that contains discontinuities and holes.
+An analysis is done with a naive implementation of phasemapping (left) and with the proposed approach (right).
+The values of the mesh correspond the phase field, of which a value of $\pi$ corresponds with the excitation wavefront.
+discontinuities, boundaries and rotors are annotated with red if a counterclockwise rotation is found and in blue for clockwise rotation.
+discontinuities and boundaries that do not show any rotation are annotated in white.](figures/comparison_snapshot_overview.png)
 
 # Theory
 
