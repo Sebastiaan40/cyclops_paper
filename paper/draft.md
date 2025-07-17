@@ -285,7 +285,15 @@ This should raise some suspicion that this analysis in incomplete.
 
 <!-- We also highly recommend the reader to watch the video of the simulation. -->
 
-<!-- figure with snapshot and phase density maps of both methods -->
+![Zoom of the bottom left of the simulation, showcasing a counterclockwise rotation.
+Left: A snapshot at time step 172,
+with the colors represent the phase of the points at that time step.
+Rotors and critical cycles are annotated in red.
+Right: The phase density map taken across the entire time of the simulation.
+The colors represent the number of time steps that a point was annotated.
+A log scale was used to enhance visibility.
+The results of the naive approach are displayed at the top,
+and the results of the extended approach the bottom.](paper/figures/zoom_rotor.png)
 
 First, let's focus on the bottom left (see Figure~LINK).
 Both approaches identify rotational activity in this region,
@@ -295,7 +303,14 @@ However, the extended approach detects a phase defect at the center of the rotat
 indicating that this is a linear rotor,
 while this information is not present in the analysis of the naive approach.
 
-<!-- figure with multiple snapshots of both methods -->
+![Zoom of the bottom right of the simulation,
+showcasing a phase defect without rotation.
+From left to right, snapshots are taken at time steps 157, 177 and 235.
+The colors represent the phase of the points at that time step.
+(Counter)clockwise rotation is annotated in red (blue)
+and phase defect without rotation is annotated in white.
+The results of the naive approach are displayed at the top,
+and the results of the extended approach the bottom.](paper/figures/zoom_defect.png)
 
 Next, we shift focus to the bottom right (see Figure~LINK).
 Looking at the snapshots of the simulation,
@@ -306,7 +321,14 @@ What happened here is that the extended approach calculated the phase index of b
 and since these are of opposite sign,
 they cancel each other out.
 
-<!-- figure with multiple snapshots of extended method -->
+![Zoom of the top of the simulation,
+showcasing rotation around a non-conductive region.
+Only the results of the extended approach are shown,
+since the naive approach did not detect anything.
+From left to right and top to bottom,
+snapshots are taken at time steps 132, 172 and 198.
+The colors represent the phase of the points at that time step and
+critical cycles with clockwise rotation are annotated in blue.](paper/figures/zoom_reentry.png)
 
 Finally, we look at the top of the simulation (see Figure~LINK).
 We now have the opposite situation as before at the bottom right:
