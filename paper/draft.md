@@ -52,7 +52,7 @@ in order to treat conductive block and non-conductive regions properly.
 An analysis is done with a naive implementation of phasemapping (left) and with the proposed approach (right).
 The values of the mesh correspond the phase field, of which a value of $\pi$ corresponds with the excitation wavefront.
 discontinuities, boundaries and rotors are annotated with red if a counterclockwise rotation is found and in blue for clockwise rotation.
-discontinuities and boundaries that do not show any rotation are annotated in white.](figures/comparison_snapshot_overview.png)
+discontinuities and boundaries that do not show any rotation are annotated in white.](paper/figures/comparison_snapshot_overview.png)
 
 # Theory
 
@@ -171,15 +171,7 @@ Figure~LINK show an example on how to adjust the curves when phase defects and h
 The domain contains singular points at $\pmb{x}_1$, ..., $\pmb{x}_n$
 and holes $H_1$, ... $H_{m-1}$, with the outer boundary representing the final hole $H_m$.
 Curves are drawn around each singular point and hole with the arrow represent the direction of integration.
-In addition, a phase defect is presented together with a curve over which to integrate to get the phase index of the defect.](figures/index_calculation.pdf)
-
-a bounded planar
-domain with holes. In the domain S, n phase singularities are located
-at x1 , . . . ,xn and encircled by closed contours 1 , . . . ,n ; h holes
-and boundaries H1 , . . . ,Hh are present, the last one being the exterior
-boundary (if any); arrows show the orientation of the contours k and
-Hk ; and inside each hole Hk , a “virtual” phase singularity is placed
-at xn+k and is encircled by the closed contour n+k .
+In addition, a phase defect is presented together with a curve over which to integrate to get the phase index of the defect.](paper/figures/index_calculation.pdf)
 
 ## Detecting rotational activity in cardiac tissue
 
@@ -208,7 +200,6 @@ that it is almost impossible to create comparative study or full review.
 Therefore, we have decided to create a case study.
 We will analysis single simulation that contains boundaries and phase defects,
 and simple enough to visually confirm.
-
 
 ## Setup of the Simulation
 
@@ -286,9 +277,45 @@ The naive phasemapping approach (see previous section) is then applied to these 
 
 # Results
 
-- Add workflow diagram with both the standard and extended method
-- First step: standard method
-- Second step: removing edges that go through phase defects
+Looking back at Figure~LINK, it is clear that the naive and extended approach does not give the result.
+Notice that the naive approach localises rotational activity in the bottom right and left
+while the extended approach localises rotational activity in the bottom right and around the non-conductive region at the top.
+Moreover, the analysis of the naive approach does not satisfy the index theorem given in equation LINK.
+This should raise some suspicion that this analysis in incomplete.
+
+<!-- We also highly recommend the reader to watch the video of the simulation. -->
+
+<!-- figure with snapshot and phase density maps of both methods -->
+
+First, let's focus on the bottom left (see Figure~LINK).
+Both approaches identify rotational activity in this region,
+and by comparing both point density maps,
+it is clear that they also recognize a similar drift.
+However, the extended approach detects a phase defect at the center of the rotational activity,
+indicating that this is a linear rotor,
+while this information is not present in the analysis of the naive approach.
+
+<!-- figure with multiple snapshots of both methods -->
+
+Next, we shift focus to the bottom right (see Figure~LINK).
+Looking at the snapshots of the simulation,
+the naive approach highlight two rotors in opposite direction, which collide with each other before making a complete turn.
+In contrast, the extended approach does not identify rotors in this region.
+Instead, it finds a phase defect that is located between the two rotors.
+What happened here is that the extended approach calculated the phase index of both rotors together,
+and since these are of opposite sign,
+they cancel each other out.
+
+<!-- figure with multiple snapshots of extended method -->
+
+Finally, we look at the top of the simulation (see Figure~LINK).
+We now have the opposite situation as before at the bottom right:
+The extended approach finds rotational activity around the non-conductive tissue while the naive approach does not.
+A closer observation of the different snapshots reveals an interesting pattern:
+The number of wavefronts around the non-conductive tissue alternates between one and three.
+But what makes is even more peculiar is that none of the wavefronts makes a complete turn.
+This reminds us about the pattern seen in the bottom right where two rotors collide with each other before completing a turn.
+Yet, this time the total phase index is non-zero.
 
 # Discussion
 
