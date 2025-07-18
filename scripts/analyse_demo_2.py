@@ -40,7 +40,7 @@ mask = np.all(action_pots == action_pots[:, 0, None], axis=1)
 action_pots[mask] = np.nan
 
 # calculate phases
-start= 50
+start = 50
 stop = 500
 hilbert = ss.hilbert(action_pots - np.nanmean(action_pots))
 phases = -1 * np.angle(-1j * hilbert)[:, :stop]
@@ -56,7 +56,7 @@ vertices = pd.concat((vertices, pd.DataFrame(phases, columns=columns)), axis=1)
 mesh = mt.Mesh(vertices, triangles)
 
 # run the extended phasemapping method
-mesh_filters = [mf.CellPhaseDiffFilter(0.08 * np.pi)]
+mesh_filters = [mf.CellPhaseDiffFilter(0.06 * np.pi)]
 epm = ExtendedPhaseMapping(mesh, mesh_filters)
 epm.run()
 
