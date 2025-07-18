@@ -8,7 +8,7 @@ classoption: twocolumn
 # Abstract
 
 Rotational activity is one of the mechanisms behind cardiac arrhythmias,
-and it is therefore important to accurately localise such activity in cardiac tissue.
+and it is therefore important to accurately localize such activity in cardiac tissue.
 A standard method for this, is called phasemapping.
 While widely used for analysing rotors in cardiac simulations,
 phasemapping struggles to correctly analyse activation maps with large non-conductive regions
@@ -24,7 +24,7 @@ a linear rotor appears to turn counterclockwise in the bottom left [@arno2021a].
 Looking at the bottom right,
 you can see two wavefronts soon to collide with each other.
 At the top we find a more complex pattern.
-There is a non-conductive region around which three wavefront are moving.
+There is a non-conductive region around which three wavefronts are moving.
 One might recognize this pattern as a critical boundary with near-complete rotation;
 a pattern that plays an important role during ablation therapy [@duytschaever2024atrial, @santucci2024identification].
 
@@ -51,8 +51,8 @@ in order to treat conductive block and non-conductive regions properly.
 ![Snapshot of a simulation with the Fenton-Karma model that contains discontinuities and holes.
 An analysis is done with a naive implementation of phasemapping (left) and with the proposed approach (right).
 The values of the mesh correspond the phase field, of which a value of $\pi$ corresponds with the excitation wavefront.
-discontinuities, boundaries and rotors are annotated with red if a counterclockwise rotation is found and in blue for clockwise rotation.
-discontinuities and boundaries that do not show any rotation are annotated in white.](paper/figures/comparison_snapshot_overview.png)
+Discontinuities, boundaries and rotors are annotated with red if a counterclockwise rotation is found and in blue for clockwise rotation.
+Discontinuities and boundaries that do not show any rotation are annotated in white.](paper/figures/comparison_snapshot_overview.png)
 
 # Theory
 
@@ -62,7 +62,7 @@ discontinuities and boundaries that do not show any rotation are annotated in wh
 
 <!-- Strogatz could give some inspiration on how to explain this better -->
 
-When analyzing an electroanatomical map,
+When analysing an electro-anatomical map,
 we often want to know if there is some rotational activity present,
 since this is one of the mechanisms behind cardiac arrhythmia.
 To express rotational activity a bit more quantitative,
@@ -78,7 +78,7 @@ This variable is referred to as the phase $\Phi$.
 
 For a phase field $\Phi(x, t)$,
 which describes the state of each point in a two-dimensional orientable manifold M (e.g. a plane or the surface of a sphere),
-it hold that
+it holds that
 if $\Phi$ is smooth across $C$,
 and we follow $\Phi$ along $C$ until we end up back at the starting point,
 The value will now be the same,
@@ -162,7 +162,7 @@ For our purposes, the most important one is that the phase field needs to be smo
 One example where this is not fulfilled are singular points.
 Another example that applies to cardiac tissue is when the wavefront of the excitation wave hits a refractory region.
 This forms a discontinuity or defect in the form of a line.
-A full discussion about this phenomena can be found in [@tomii2021spatial],
+A full discussion about this phenomenon can be found in [@tomii2021spatial],
 but for our purpose it is enough to define a phase defect as a discontinuity in the phase field.
 
 Figure~LINK show an example on how to adjust the curves when phase defects and holes are present.
@@ -178,16 +178,16 @@ In addition, a phase defect is presented together with a curve over which to int
 A well-known method that exploits the idea of phase indices is called phasemapping.
 With phasemapping, the cardiac activation map is scanned across with a small area
 and the phase index is computed along the circumference of this area.
-Since method is mostly used while analysing rotors,
+Since this method is mostly used while analysing rotors,
 the scanning area is made as small as possible in order to ensure
 that only one singular point lies within the area.
 
-We argue that using phasemapping will give a incomplete analysis
+We argue that using phasemapping will give an incomplete analysis
 because the cardiac can have phase defects and boundaries
 for which the points that lie on them cannot be properly analysed using this method
-Figure (LINK) shows that you cannot draw a closed curve soley around such points
+Figure (LINK) shows that you cannot draw a closed curve solely around such points
 that is smooth.
-In other words, there is no way of analysing all points separatly and
+In other words, there is no way of analysing all points separately and
 the next best thing that we can do,
 is calculating the phase index for the boundaries and the phase defect as a whole.
 
@@ -195,7 +195,9 @@ is calculating the phase index for the boundaries and the phase defect as a whol
 
 # Methods
 
-There exists a numeruous amount implementations and methods to detect rotational activity [@pikunov2023th, @gurevich2019robuste, @li2020standardizing]
+<!-- Use the original papers that propose the algorithms instead of li2020standardizing -->
+
+There exists a numerous amount implementations and methods to detect rotational activity [@pikunov2023th, @gurevich2019robuste, @li2020standardizing]
 that it is almost impossible to create comparative study or full review.
 Therefore, we have decided to create a case study.
 We will analysis single simulation that contains boundaries and phase defects,
@@ -209,7 +211,7 @@ This also has the benefit to get a full overview of the simulation at once
 and easily place snapshots in the paper.
 
 The simulation is created using Finitewave (<https://github.com/finitewave/Finitewave>),
-an open-source Python package for a wide range of tasks in modeling cardiac electrophysiology using finite-difference methods.
+an open-source Python package for a wide range of tasks in modelling cardiac electrophysiology using finite-difference methods.
 The main argument for using Finitewave is its clear and transparent implementation of the models
 which allows us to verify its correctness.
 Furthermore, the intuitive interface and lots of examples make it easy to create, evaluate, and adjust simulations.
@@ -260,7 +262,7 @@ An algorithm for this will look like:
 
 ## Extended Phasemapping
 
-To extend the naive approach, the first thing to do is localising the phase defects.
+To extend the naive approach, the first thing to do is localizing the phase defects.
 Remember that phase defects are defined as discontinuities in the phase field.
 In a triangulated mesh this would manifest as a big phase difference on the edges.
 Therefore, the most straightforward thing to do is setting a threshold $d$ so that an edge with a phase difference $\Delta\Phi$
@@ -278,35 +280,39 @@ The naive phasemapping approach (see previous section) is then applied to these 
 # Results
 
 Looking back at Figure~LINK, it is clear that the naive and extended approach does not give the result.
-Notice that the naive approach localises rotational activity in the bottom right and left
-while the extended approach localises rotational activity in the bottom right and around the non-conductive region at the top.
+Notice that the naive approach localizes rotational activity in the bottom right and left
+while the extended approach localizes rotational activity in the bottom right and around the non-conductive region at the top.
 Moreover, the analysis of the naive approach does not satisfy the index theorem given in equation LINK.
-This should raise some suspicion that this analysis in incomplete.
+This should raise some suspicion that this analysis inaccurate.
 
 <!-- We also highly recommend the reader to watch the video of the simulation. -->
+<!-- we would also like to mention that the boundary is accounted for in the extended approach. -->
+<!-- It just happens to be that there is no rotation at the outer boundary. -->
 
 ![Zoom of the bottom left of the simulation, showcasing a counterclockwise rotation.
 Left: A snapshot at time step 172,
-with the colors represent the phase of the points at that time step.
+with the colours represent the phase of the points at that time step.
 Rotors and critical cycles are annotated in red.
 Right: The phase density map taken across the entire time of the simulation.
-The colors represent the number of time steps that a point was annotated.
+The colours represent the number of time steps that a point was annotated.
 A log scale was used to enhance visibility.
 The results of the naive approach are displayed at the top,
 and the results of the extended approach the bottom.](paper/figures/zoom_rotor.png)
+
+<!-- Maybe, go into more detail about the movement of the rotor and phase defect. -->
 
 First, let's focus on the bottom left (see Figure~LINK).
 Both approaches identify rotational activity in this region,
 and by comparing both point density maps,
 it is clear that they also recognize a similar drift.
-However, the extended approach detects a phase defect at the center of the rotational activity,
+However, the extended approach detects a phase defect at the centre of the rotational activity,
 indicating that this is a linear rotor,
 while this information is not present in the analysis of the naive approach.
 
 ![Zoom of the bottom right of the simulation,
 showcasing a phase defect without rotation.
 From left to right, snapshots are taken at time steps 157, 177 and 235.
-The colors represent the phase of the points at that time step.
+The colours represent the phase of the points at that time step.
 (Counter)clockwise rotation is annotated in red (blue)
 and phase defect without rotation is annotated in white.
 The results of the naive approach are displayed at the top,
@@ -327,7 +333,7 @@ Only the results of the extended approach are shown,
 since the naive approach did not detect anything.
 From left to right and top to bottom,
 snapshots are taken at time steps 132, 172 and 198.
-The colors represent the phase of the points at that time step and
+The colours represent the phase of the points at that time step and
 critical cycles with clockwise rotation are annotated in blue.](paper/figures/zoom_reentry.png)
 
 Finally, we look at the top of the simulation (see Figure~LINK).
@@ -339,52 +345,81 @@ But what makes is even more peculiar is that none of the wavefronts makes a comp
 This reminds us about the pattern seen in the bottom right where two rotors collide with each other before completing a turn.
 Yet, this time the total phase index is non-zero.
 
+<!-- rewrite all of this -->
+
 # Discussion
 
-- Showcase clinical relevance. [@duytschaever2024atrial, @santucci2024identification, @takigawa2019a]
-- Limitations: simulation instead of clinical case, phase is necessary to know
-  --> We can use the signals or LATs if needed
-- Paper arno2023 --> even more impractical for clinical cases
-- Growth and shrinking is irrelevant for AT (although functional block is temporal)
-- Paper kabus2024 --> phase definitions, sawtooth
-- Limitations: identifying phase defects
-- Paper arno2024
-- Limitations: noisy data
-- Finite wavelength could give an additional requirement which can limit false positives
-- Paper of different phasemapping thresholds might be explained by phase defects
-- Comparison with different methods (back-tracking, intersection points)
-  --> back-tracking cannot find near-complete rotations
-  --> intersection points are the same as phasemapping
-- Limitation: while defining a phase defect as a discontinuity is fine,
-  it does not tell the whole story. For example, looking at the fork,
-  the discontinuity disappears when the wavefront is moving away from it.
-  However, the next wave still can't pass through it.
+The presented simulation is nothing out of the ordinary.
+It has only three main components:
+a linear core, rotation around a non-conductive region and a phase defect.
+That is it. No anisotropic conductivity, no fibres and no noise.
+The simulation is also of a good resolution, which also favours phasemapping.
+Yet, it can cause trouble for phasemapping if not treated properly.
 
-Besides phasemapping, there exists other methods such as:
+<!-- Check out revertebators -->
+
+As expected, phasemapping is good at finding rotors,
+which is why both approaches find rotational activity at the bottom left.
+Nevertheless, the rotor in this simulation has a linear core
+and, as discussed in [@arno2021a, @tomii2021spatial], is different from a rotor tip.
+
+<!-- Not sure about this -->
+
+Discussing the phase defect instead of the rotor tip would also simplify the description of the rotor movement.
+Notice that the rotor tip is always attached to the phase defect.
+This means that you can split up the movement of the rotor tip as a rotation around the phase defect
+and the movement of the phase defect.
+What we are implying is that just the movement of the phase defect is enough to describe the dynamics of the system
+and that is generally less complex.
+
+In contrast to the successful detection of rotors,
+we have demonstrated that phase defects can cause false positives, as seen in Figure~LINK.
+Some people would dismiss these rotors tips by stating that they do not make a full rotation,
+but this would require a visual inspection or post-processing steps.
+Accounting for phase defects dismisses these rotors already,
+reducing the necessary steps to get to the correct interpretation.
+
+However, phase defects do not tell the whole story.
+For example, looking at the phase defect,
+the discontinuity disappears when the wavefront is moving away from it,
+but the next wave still can't pass through it.
 
 Since the phase space of cardiac tissue can exhibit interfaces or defects,
 it is not necessarily guaranteed that phasemapping and waveback -and front intersection points give the correct analysis.
 This could explain the reason why using different thresholds to count phase jumps,
 gives different results. (LINK!!!)
 
-For backtracking, phase defects are not a problem, as it will inherently go around them.
-However, this method is probably incapable of detecting near-complete rotations.
+Not much attention is given to non-conductive structures, but they do play an import role in the clinical field.
+As for the pattern in the presented simulation, it turns out that this used to be dismissed as not important.
+However, recent studies have found that these play a critical role in the success of ablation therapies [@duytschaever2024atrial, @santucci2024identification, @takigawa2019a].
 
-Equivalent to topological charges, we could also count the number of [phase jumps]().
+Our naive implementation did not detect anything around the non-conductive tissue,
+but in case an implementation searches for rotors by looking at the endpoints of the wavefront,
+it would detect either one or three rotors.
+While a phase density map would then highlight the full boundary,
+the interpretation would be a bit messy.
+Especially if you consider rotors only to be true if they make a full rotation.
+Calculating the phase index of the boundary gives a clearer interpretation
+and is therefore preferred.
 
-<!-- might be wrong since they don't integrate -->
+One could argue that the naive approach that was used,
+was too simplistic and that current algorithms would do a better job at analysing this simulation.
+However, we have not encountered implementation of rotor detection that explicitly account for this.
 
-The kernel method requires that the full region is smooth,
-which means that it cannot calculate the phase index over phase defects.
+## Future work
 
-**Ending**
+- Fibrotic tissue are trouble since they make the field not smooth
+- Test out noisy data, could phase defect make phasemapping more robust @tomii2021spatial
+  Finite wavelength could give an additional requirement which can limit false positives
+- Paper kabus2024 --> phase definitions, sawtooth
+- Limitations: identifying phase defects
 
 # Conclusion
 
 - Properly addressing phase defects and adapting the curve can make phasemapping
   suitable for analysing clinical cases.
 - Refer to preregistration.
-- Additionaly, we encourage research groups to try out this simple example
+- Additionally, we encourage research groups to try out this simple example
   to see whether their detection method can analyse this map correctly.
   However, keep in mind Goodhart's Law
 
@@ -395,9 +430,9 @@ can have a look at our preregistration (LINK!!!).
 
 # Data availability
 
-- github: code + source code
-- zenodo: figures, simulation data, video
-- osf: preregistration
+- GitHub: code + source code
+- Zenodo: figures, simulation data, video
+- OSF: preregistration
 
 Readers who would like to reproduce our results are referred to this GitHub repository (LINK!!!),
 which contains the used code and some further explanation.
