@@ -2,3 +2,6 @@ data/
 videos/
 *.pdf
 figures/
+output/
+aux/
+indent.log

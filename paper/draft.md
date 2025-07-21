@@ -3,6 +3,7 @@ title: How phase defects and boundaries can mess up phasemapping
 author: Bjorn Verstraeten
 date: \today
 classoption: twocolumn
+bibliography: references.bib
 ---
 
 # Abstract
@@ -197,7 +198,7 @@ is calculating the phase index for the boundaries and the phase defect as a whol
 
 <!-- Use the original papers that propose the algorithms instead of li2020standardizing -->
 
-There exists a numerous amount implementations and methods to detect rotational activity [@pikunov2023th, @gurevich2019robuste, @li2020standardizing]
+There exists a numerous amount implementations and methods to detect rotational activity [@pikunov2023the, @gurevich2019robust, @li2020standardizing]
 that it is almost impossible to create comparative study or full review.
 Therefore, we have decided to create a case study.
 We will analysis single simulation that contains boundaries and phase defects,
