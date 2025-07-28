@@ -4,7 +4,7 @@
 \addbibresource{references.bib}
 \graphicspath{{./figures/}}
 
-\title{How phase defects and boundaries can mess up phasemapping}
+\title{Handling Phase Defects and Non-Conductive Tissue}
 \author[1]{Bjorn Verstraeten}
 \affil[1]{Ghent University}
 \date{\today}
@@ -17,19 +17,23 @@
 
     \begin{center}
       \resizebox{0.8\textwidth}{!}{\includegraphics{comparison_snapshot_overview.png}}
-      % \captionof{figure}{Snapshot of a simulation with the Fenton-Karma model that
-      % contains discontinuities and holes. An analysis is done with a naive
-      % implementation of phasemapping (left) and with the proposed approach
-      % (right). The values of the mesh correspond the phase field, of which a
-      % value of \(\pi\) corresponds with the excitation wavefront.
-      % Discontinuities, boundaries and rotors are annotated with red if a
-      % counterclockwise rotation is found and in blue for clockwise rotation.
-      % Discontinuities and boundaries that do not show any rotation are
-      % annotated in white.}
+      \captionof{figure}{
+        % Snapshot of a simulation with the Fenton-Karma model that
+        % contains discontinuities and holes. An analysis is done with a naive
+        % implementation of phasemapping (left) and with the proposed approach
+        % (right). The values of the mesh correspond the phase field, of which a
+        % value of \(\pi\) corresponds with the excitation wavefront.
+        % Discontinuities, boundaries and rotors are annotated with red if a
+        % counterclockwise rotation is found and in blue for clockwise rotation.
+        % Discontinuities and boundaries that do not show any rotation are
+        % annotated in white.
+      }
+      \label{fig:comparison_snapshot_overview}
     \end{center}
 
     \begin{abstract}
-      Rotational activity is one of the mechanisms behind cardiac arrhythmias,
+      \noindent Rotational activity is one of the mechanisms behind
+      cardiac arrhythmias,
       and it is therefore important to accurately localize such activity in
       cardiac tissue. A standard method for this, is called phasemapping.
       While widely used for analysing rotors in cardiac simulations,
@@ -45,14 +49,15 @@
 
 \section{Introduction}\label{introduction}
 
-Consider the simulation in Figure~LINK. By visually
-inspecting the map, a linear rotor appears to turn counterclockwise in
+Consider the simulation in figure~\ref{fig:comparison_snapshot_overview}.
+By visually inspecting the map, a linear rotor appears to turn
+counterclockwise in
 the bottom left \autocite{arno2021a}. Looking at the bottom right, you can
 see two wavefronts soon to collide with each other. At the top we find a
 more complex pattern. There is a non-conductive region around which
 three wavefronts are moving. One might recognize this pattern as a
 critical boundary with near-complete rotation; a pattern that plays an
-important role during ablation therapy
+important role during ablation therapy.
 \autocite{duytschaever2024atrial, santucci2024identification}.
 
 While for this simple simulation, a visual inspection is reasonable, it
@@ -60,7 +65,6 @@ is not considered as an optimal solution as it is subject to human
 mistakes. Instead, it would much more preferable to have a tool that
 would act as some kind of spell check where the error, in this case the
 rotational activity, is highlighted.
-
 A potential candidate for such tool is called phasemapping, which will
 be discussed in the next section. However, we will show that a naive
 implementation of phasemapping is not capable of analysing a map with
@@ -73,7 +77,6 @@ emphasis on the requirements for which the standard implementation gives
 the correct result. We will then formally define conductive blocks and
 showcase how to extend standard phasemapping in order to treat
 conductive block and non-conductive regions properly.
-
 
 \section{Theory}\label{theory}
 
@@ -109,7 +112,7 @@ formula.
 theorem, the phase index can also be written as
 
 \begin{equation}
-  I = \frac{1}{2\pi} \iint_S \nabla \times (\nabla \Phi) \cdot dS
+  I = \frac{1}{2\pi} \iint_S \nabla \times (\nabla \Phi) \cdot d\bm{S}
   \label{eq:phase-index-stokes}
 \end{equation}
 
@@ -191,20 +194,21 @@ phase defect as a discontinuity in the phase field.
 Figure~\ref{fig:index_calculation} show an example on how to adjust the curves
 when phase defects and holes are present.
 
-\begin{figure}
-\centering
-\includefig{index_calculation}
-\caption{Example of a bounded planar domain with holes. The domain
-contains singular points at \(\pmb{x}_1\), \ldots, \(\pmb{x}_n\) and
-holes \(H_1\), \ldots{} \(H_{m-1}\), with the outer boundary
-representing the final hole \(H_m\). Curves are drawn around each
-singular point and hole with the arrow represent the direction of
-integration. In addition, a phase defect is presented together with a
-curve over which to integrate to get the phase index of the defect.}
-\label{fig:index_calculation}
+\begin{figure}[ht]
+  \centering
+  \includefig{index_calculation}
+  \caption{Example of a bounded planar domain with holes. The domain
+    contains singular points at \(\pmb{x}_1\), \ldots, \(\pmb{x}_n\) and
+    holes \(H_1\), \ldots{} \(H_{m-1}\), with the outer boundary
+    representing the final hole \(H_m\). Curves are drawn around each
+    singular point and hole with the arrow represent the direction of
+    integration. In addition, a phase defect is presented together with a
+  curve over which to integrate to get the phase index of the defect.}
+  \label{fig:index_calculation}
 \end{figure}
 
-\subsection{Detecting rotational activity in cardiac tissue}\label{detecting-rotational-activity-in-cardiac-tissue}
+\subsection{Detecting rotational activity in cardiac
+tissue}\label{detecting-rotational-activity-in-cardiac-tissue}
 
 A well-known method that exploits the idea of phase indices is called
 phasemapping. With phasemapping, the cardiac activation map is scanned
@@ -216,7 +220,8 @@ order to ensure that only one singular point lies within the area.
 We argue that using phasemapping will give an incomplete analysis
 because the cardiac can have phase defects and boundaries for which the
 points that lie on them cannot be properly analysed using this method
-Figure~\ref{fig:index_calculation} shows that you cannot draw a closed curve solely around
+Figure~\ref{fig:index_calculation} shows that you cannot draw a
+closed curve solely around
 such points that is smooth. In other words, there is no way of analysing
 all points separately and the next best thing that we can do, is
 calculating the phase index for the boundaries and the phase defect as a
@@ -225,7 +230,8 @@ whole.
 \section{Methods}\label{methods}
 
 There exists a numerous amount implementations and methods to detect
-rotational activity \autocite{pikunov2023the, gurevich2019robust, li2020standardizing}
+rotational activity \autocite{pikunov2023the, gurevich2019robust,
+li2020standardizing}
 that it is almost impossible to create
 comparative study or full review. Therefore, we have decided to create a
 case study. We will analysis single simulation that contains boundaries
@@ -237,7 +243,6 @@ As it is not required to have realistic geometries to induce phase
 defects, We chose to create a simulation on a homogeneous 2D grid. This
 also has the benefit to get a full overview of the simulation at once
 and easily place snapshots in the paper.
-
 The simulation is created using Finitewave
 (\url{https://github.com/finitewave/Finitewave}), an open-source Python
 package for a wide range of tasks in modelling cardiac electrophysiology
@@ -279,8 +284,19 @@ The first step was to convert the action potential to a phase field.
 This was done using taking the angle Hilbert transform of the action
 potential as suggested by \autocite{bray2002considerations}. Additionally,
 we made sure that the peak of the action potential corresponds to
-\(\pi\) (see Figure LINK), so that it becomes straightforward to compare
-the phase field with the action potential.
+\(\pi\) (see Figure~\ref{fig:action_potential_and_phase}),
+so that it becomes straightforward to compare the phase field with
+the action potential.
+
+\begin{figure}[ht]
+  \begin{center}
+    \includegraphics[width=\columnwidth]{figures/action_potential_and_phase.png}
+  \end{center}
+  \caption{
+    Time series of the action potential of one cell (orange)
+    and the calculated phase (blue).
+  }\label{fig:action_potential_and_phase}
+\end{figure}
 
 Next, we will create a triangulated mesh and compute the phase index for
 each triangle at each time step. In theory, the cells of the mesh could
@@ -291,19 +307,19 @@ For any polygon, the phase index can be calculated by counting the
 number of phase jumps. An algorithm for this will look like:
 
 \begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Compute the phase difference \(\Delta\Phi\) of all edges.
-\item
-  Count the number of times \(\Delta\Phi\) is bigger than \(\pi\)
-  (positive phase jump).
-\item
-  Count the number of times \(\Delta\Phi\) is smaller than \(-\pi\)
-  (negative phase jump).
-\item
-  Calculate the index with \(I = P - N\) with \(P\) and \(N\) the number
-  of positive and negative phase jumps respectively.
+    \def\labelenumi{\arabic{enumi}.}
+    \tightlist
+  \item
+    Compute the phase difference \(\Delta\Phi\) of all edges.
+  \item
+    Count the number of times \(\Delta\Phi\) is bigger than \(\pi\)
+    (positive phase jump).
+  \item
+    Count the number of times \(\Delta\Phi\) is smaller than \(-\pi\)
+    (negative phase jump).
+  \item
+    Calculate the index with \(I = P - N\) with \(P\) and \(N\) the number
+    of positive and negative phase jumps respectively.
 \end{enumerate}
 
 \subsection{Extended Phasemapping}\label{extended-phasemapping}
@@ -329,29 +345,32 @@ polygons together with the remaining cells.
 
 \section{Results}\label{results}
 
-Looking back at Figure~, it is clear that the naive
+Looking back at Figure~\ref{fig:comparison_snapshot_overview}, it is
+clear that the naive
 and extended approach does not give the result. Notice that the naive
 approach localizes rotational activity in the bottom right and left
 while the extended approach localizes rotational activity in the bottom
 right and around the non-conductive region at the top. Moreover, the
 analysis of the naive approach does not satisfy the index theorem given
-in equation LINK. This should raise some suspicion that this analysis
+in equation~\ref{eq:index-theorem-extended}. This should raise some
+suspicion that this analysis
 inaccurate.
 
-\begin{figure}
-\centering
-\includegraphics[width=\columnwidth]{zoom_rotor.png}
-\caption{Zoom of the bottom left of the simulation, showcasing a
-counterclockwise rotation. Left: A snapshot at time step 172, with the
-colours represent the phase of the points at that time step. Rotors and
-critical cycles are annotated in red. Right: The phase density map taken
-across the entire time of the simulation. The colours represent the
-number of time steps that a point was annotated. A log scale was used to
-enhance visibility. The results of the naive approach are displayed at
-the top, and the results of the extended approach the bottom.}
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\columnwidth]{zoom_rotor.png}
+  \caption{Zoom of the bottom left of the simulation, showcasing a
+    counterclockwise rotation. Left: A snapshot at time step 172, with the
+    colours represent the phase of the points at that time step. Rotors and
+    critical cycles are annotated in red. Right: The phase density map taken
+    across the entire time of the simulation. The colours represent the
+    number of time steps that a point was annotated. A log scale was used to
+    enhance visibility. The results of the naive approach are displayed at
+  the top, and the results of the extended approach the bottom.}
+  \label{fig:zoom-rotor}
 \end{figure}
 
-First, let's focus on the bottom left (see Figure~LINK).
+First, let's focus on the bottom left (see Figure~\ref{fig:zoom-rotor}).
 Both approaches identify rotational activity in this region, and by
 comparing both point density maps, it is clear that they also recognize
 a similar drift. However, the extended approach detects a phase defect
@@ -359,20 +378,21 @@ at the centre of the rotational activity, indicating that this is a
 linear rotor, while this information is not present in the analysis of
 the naive approach.
 
-\begin{figure}
-\centering
-\includegraphics[width=\columnwidth]{zoom_defect.png}
-\caption{Zoom of the bottom right of the simulation, showcasing a phase
-defect without rotation. From left to right, snapshots are taken at time
-steps 157, 177 and 235. The colours represent the phase of the points at
-that time step. (Counter)clockwise rotation is annotated in red (blue)
-and phase defect without rotation is annotated in white. The results of
-the naive approach are displayed at the top, and the results of the
-extended approach the bottom.}
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\columnwidth]{zoom_defect.png}
+  \caption{Zoom of the bottom right of the simulation, showcasing a phase
+    defect without rotation. From left to right, snapshots are taken at time
+    steps 157, 177 and 235. The colours represent the phase of the points at
+    that time step. (Counter)clockwise rotation is annotated in red (blue)
+    and phase defect without rotation is annotated in white. The results of
+    the naive approach are displayed at the top, and the results of the
+  extended approach the bottom.}
+  \label{fig:zoom-defect}
 \end{figure}
 
 Next, we shift focus to the bottom right (see
-Figure~LINK). Looking at the snapshots of the simulation,
+Figure~\ref{fig:zoom-defect}). Looking at the snapshots of the simulation,
 the naive approach highlight two rotors in opposite direction, which
 collide with each other before making a complete turn. In contrast, the
 extended approach does not identify rotors in this region. Instead, it
@@ -381,19 +401,20 @@ happened here is that the extended approach calculated the phase index
 of both rotors together, and since these are of opposite sign, they
 cancel each other out.
 
-\begin{figure}
-\centering
-\includegraphics[width=\columnwidth]{zoom_reentry.png}
-\caption{Zoom of the top of the simulation, showcasing rotation around a
-non-conductive region. Only the results of the extended approach are
-shown, since the naive approach did not detect anything. From left to
-right and top to bottom, snapshots are taken at time steps 132, 172 and
-198. The colours represent the phase of the points at that time step and
-critical cycles with clockwise rotation are annotated in blue.}
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\columnwidth]{zoom_reentry.png}
+  \caption{Zoom of the top of the simulation, showcasing rotation around a
+    non-conductive region. Only the results of the extended approach are
+    shown, since the naive approach did not detect anything. From left to
+    right and top to bottom, snapshots are taken at time steps 132, 172 and
+    198. The colours represent the phase of the points at that time step and
+  critical cycles with clockwise rotation are annotated in blue.}
+  \label{fig:zoom-reentry}
 \end{figure}
 
 Finally, we look at the top of the simulation (see
-Figure~LINK). We now have the opposite situation as
+Figure~\ref{fig:zoom-reentry}). We now have the opposite situation as
 before at the bottom right: The extended approach finds rotational
 activity around the non-conductive tissue while the naive approach does
 not. A closer observation of the different snapshots reveals an
@@ -417,7 +438,6 @@ As expected, phasemapping is good at finding rotors, which is why both
 approaches find rotational activity at the bottom left. Nevertheless,
 the rotor in this simulation has a linear core and, as discussed in
 \autocite{arno2021a, tomii2021spatial}, is different from a rotor tip.
-
 Discussing the phase defect instead of the rotor tip would also simplify
 the description of the rotor movement. Notice that the rotor tip is
 always attached to the phase defect. This means that you can split up
@@ -428,21 +448,19 @@ system and that is generally less complex.
 
 In contrast to the successful detection of rotors, we have demonstrated
 that phase defects can cause false positives, as seen in
-Figure~LINK. Some people would dismiss these rotors tips
+Figure~\ref{fig:zoom-defect}. Some people would dismiss these rotors tips
 by stating that they do not make a full rotation, but this would require
 a visual inspection or post-processing steps. Accounting for phase
 defects dismisses these rotors already, reducing the necessary steps to
 get to the correct interpretation.
-
 However, phase defects do not tell the whole story. For example, looking
 at the phase defect, the discontinuity disappears when the wavefront is
 moving away from it, but the next wave still can't pass through it.
-
 Since the phase space of cardiac tissue can exhibit interfaces or
 defects, it is not necessarily guaranteed that phasemapping and waveback
 -and front intersection points give the correct analysis. This could
 explain the reason why using different thresholds to count phase jumps,
-gives different results. (LINK!!!)
+gives different results \autocite{li2020standardizing}.
 
 Not much attention is given to non-conductive structures, but they do
 play an import role in the clinical field. As for the pattern in the
@@ -450,7 +468,6 @@ presented simulation, it turns out that this used to be dismissed as not
 important. However, recent studies have found that these play a critical
 role in the success of ablation therapies
 \autocite{duytschaever2024atrial, santucci2024identification, takigawa2019a}.
-
 Our naive implementation did not detect anything around the
 non-conductive tissue, but in case an implementation searches for rotors
 by looking at the endpoints of the wavefront, it would detect either one
@@ -460,40 +477,78 @@ consider rotors only to be true if they make a full rotation.
 Calculating the phase index of the boundary gives a clearer
 interpretation and is therefore preferred.
 
-One could argue that the naive approach that was used, was too
-simplistic and that current algorithms would do a better job at
-analysing this simulation. However, we have not encountered
-implementation of rotor detection that explicitly account for this.
+Hopefully, one notices that non-conductive structures, boundaries and
+phase defects are all treated in the same manner.
+In case such structures have a non-zero phase index,
+it is quite natural to call them all as finite cores,
+referring to the finite circumference that all of them possess.
+We would like to highlight that no singular cores were found when
+applying the extended approach.
+This result aligns with the results from \autocite{tomii2021spatial, arno2021a},
+that states that all rotors are found around a phase defect (CHECK
+WHAT ARNO SAID).
+This could imply that only finite cores are possible.
+An implication that is also strengthened by the argument that the
+tissue has a finite minimal wavelength,
+or the smallest curve with a non-zero phase index has a finite circumference.
+
+Finally, one could argue that the naive approach that was used,
+was too simplistic and that current algorithms would do a better job at
+analysing this simulation.
+However, we have not encountered implementation of rotor detection
+that explicitly account for this.
+Rather than stating that the extended approach would yield better results,
+we imply that the current state-of-the-art algorithms would benefit
+from explicitly checking for phase defects.
 
 \subsection{Future work}\label{future-work}
 
-\begin{itemize}
-\tightlist
-\item
-  Fibrotic tissue are trouble since they make the field not smooth
-\item
-  Test out noisy data, could phase defect make phasemapping more robust
-  \autocite{tomii2021spatial} Finite wavelength could give an additional
-  requirement which can limit false positives
-\item
-  Paper kabus2024 --\textgreater{} phase definitions, sawtooth
-\item
-  Limitations: identifying phase defects
-\end{itemize}
+The main goal of our research is to develop analytical tools for physicians
+that leverage theoretical insights.
+We think that extending phasemapping to handle non-conductive tissue
+and phase defects,
+can be useful when examining activation maps of atrial tachycardia.
+With that in mind, a few things need to be checked before
+phasemapping can be used in the clinical field.
+
+First up, the activation maps are generally speaking of lower resolution
+and contain noise.
+Previously, it was already shown that phasemapping does not perform well on
+noisy and low-resolution data \autocite{lootens2024directed} (CITATION LOW-RES).
+It would be interesting to replicated robustness analyses of
+phasemapping methods using the extended approach.
+Additionally, if one requires that only finite cores exist,
+the robustness of phasemapping could be increased even further.
+
+Secondly, we could apply fibrosis to the tissue.
+We hypothesize that this would not form any problems,
+since fibrotic tissue can be considered the same as non-conductive tissue.
+
+Finally, we believe that there still exist some improvements in
+constructing a phase field.
+As shown in Figure~\ref{fig:action_potential_and_phase},
+the phase that is created with the Hilbert transform is quite steep
+around phase jumps,
+which makes differentiating the phase jumps from the phase defects
+more difficult.
+Additionally, it does not account for that fact that cells can linger
+in the resting state.
+Some new definitions are proposed by~\cite{kabus2022numerical} that
+could improve the construction of phases.
 
 \section{Conclusion}\label{conclusion}
 
 \begin{itemize}
-\tightlist
-\item
-  Properly addressing phase defects and adapting the curve can make
-  phasemapping suitable for analysing clinical cases.
-\item
-  Refer to preregistration.
-\item
-  Additionally, we encourage research groups to try out this simple
-  example to see whether their detection method can analyse this map
-  correctly. However, keep in mind Goodhart's Law
+    \tightlist
+  \item
+    Properly addressing phase defects and adapting the curve can make
+    phasemapping suitable for analysing clinical cases.
+  \item
+    Refer to preregistration.
+  \item
+    Additionally, we encourage research groups to try out this simple
+    example to see whether their detection method can analyse this map
+    correctly. However, keep in mind Goodhart's Law
 \end{itemize}
 
 This paper is meant to serve as a theoretical backbone to understand how
@@ -504,13 +559,13 @@ preregistration (LINK!!!).
 \section{Data availability}\label{data-availability}
 
 \begin{itemize}
-\tightlist
-\item
-  GitHub: code + source code
-\item
-  Zenodo: figures, simulation data, video
-\item
-  OSF: preregistration
+    \tightlist
+  \item
+    GitHub: code + source code
+  \item
+    Zenodo: figures, simulation data, video
+  \item
+    OSF: preregistration
 \end{itemize}
 
 Readers who would like to reproduce our results are referred to this
