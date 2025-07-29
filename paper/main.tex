@@ -66,7 +66,6 @@ it is not considered as an optimal solution as it is subject to human mistakes.
 Instead, it would much more preferable to have a tool
 that would act as some kind of spell check where the error,
 in this case the rotational activity, is highlighted.
-
 A potential candidate for such tool is called phasemapping,
 which is a method that is often used for rotor detection (CITATION).
 While a naive implementation of phasemapping would detect rotors
@@ -106,6 +105,40 @@ Either the phase of the starting point has the same value as at the beginning,
 or the values has been shifted be a multiple of $2\pi$.
 Note that all possibilities represent the same state.
 However, in the last case, the phase index will be non-zero.
+In other words, the phase index tells us how the state of a cell changes when traversing over a curve.
+One possible curve for which the phase index is non-zero is a curve that surrounds a rotor.
+We can image that this curve follows the direction the wavefront
+and by the time the wavefront get back at the starting position,
+the state of each cell on the curve has been cycled through all states.
+
+Another interesting insight can be found when rewriting Equation~\ref{eq:phase-index}.
+Assuming that $\nabla\phi$ is smooth in a region $S$ that is bounded by a curve $C$,
+Stokes' theorem can be applied, giving
+
+\begin{equation}
+  I = \frac{1}{2\pi} \iint_S \nabla \times (\nabla \phi) \cdot d\bm{S}
+  \label{eq:phase-index-stokes}
+\end{equation}
+
+\noindent This expression will always be zero,
+and thus, the only time that the phase index is different from zero will be when
+$\nabla \phi$ is not smooth or if $\phi$ is undefined in some part of $S$.
+This is exactly the case when a rotor is present in $S$,
+since at the rotor tip, the state is undefined.
+We also like to mention that Equation~\ref{eq:phase-index-stokes}
+is used in the kernel implementation of phasemapping found in (CITATION).
+
+At this point, it should be clear how the phase index can be used to detect rotors,
+but we would like to highlight some subtleties in its interpretation.
+First, the phase index is a property of a closed curve
+and not of a singular point.
+Only when there is one singular point inside that curve,
+a phase index can be assigned to that point.
+Nevertheless, it is perfectly fine to draw a curve around multiple rotor tips
+and calculate the phase index.
+The phase index of this curve would then be equal to the sum of all rotor tips inside that curve.
+This also explains why it is preferred to make the closed curves as small as possible
+if we want to use the phase index for rotor detection.
 
 When analysing an electro-anatomical map, we often want to know if there
 is some rotational activity present, since this is one of the mechanisms
@@ -130,11 +163,6 @@ formula.
 
 \noindent where \(I\) is called the phase index of the curve. Using Stokes'
 theorem, the phase index can also be written as
-
-\begin{equation}
-  I = \frac{1}{2\pi} \iint_S \nabla \times (\nabla \Phi) \cdot d\bm{S}
-  \label{eq:phase-index-stokes}
-\end{equation}
 
 \noindent In case \(\Phi\) is differentiable across S, the index \(I\) is zero.
 Which means that \(I\) is only non-zero if a singular point is present
