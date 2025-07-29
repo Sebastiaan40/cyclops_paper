@@ -221,15 +221,6 @@ resulting in the following equation:
 \(H_j\) the holes,
 and \(D_k\) the phase defects.
 From now on we will refer to Equation~\ref{eq:index-theorem-extended} as the index theorem.
-This conservation law can be a helpful tool to check if something was missed.
-
-\vspace{1em}
-
-\noindent In this paper, we will summarize the idea behind phasemapping, putting
-emphasis on the requirements for which the standard implementation gives
-the correct result. We will then formally define conductive blocks and
-showcase how to extend standard phasemapping in order to treat
-conductive block and non-conductive regions properly.
 
 \begin{figure}[ht]
   \centering
@@ -237,22 +228,41 @@ conductive block and non-conductive regions properly.
   \caption{Example of a bounded planar domain with holes. The domain
     contains singular points at \(\pmb{x}_1\), \ldots, \(\pmb{x}_n\) and
     holes \(H_1\), \ldots{} \(H_{m-1}\), with the outer boundary
-    representing the final hole \(H_m\). Curves are drawn around each
-    singular point and hole with the arrow represent the direction of
-    integration. In addition, a phase defect is presented together with a
-  curve over which to integrate to get the phase index of the defect.}
+    representing the final hole \(H_m\).
+    Non-conductive patches are shaded in and considered as a hole.
+    Curves are drawn around each singular point and hole
+    with the arrow represent the direction of integration.
+    In addition, a phase defect $D_k$ is presented
+    together with a curve over which to integrate to get the phase index of the defect.
+  }
   \label{fig:index_calculation}
 \end{figure}
 
+\vspace{2em}
+
+\noindent Like stated above, the main topic of this paper is about the importance
+of handling obstacles and boundaries in cardiac tissue.
+The index theorem can be useful for assessing the quality of an analysis,
+but it does not give a conclusive answer.
+Therefore, in this paper we will try to present a simulation
+that contains all pitfalls which are discussed above,
+while still being simple enough to visually confirm the correct analysis.
+
 \section{Methods}\label{methods}
 
-There exists a numerous amount implementations and methods to detect
-rotational activity \autocite{pikunov2023the, gurevich2019robust,
-li2020standardizing}
-that it is almost impossible to create
-comparative study or full review. Therefore, we have decided to create a
-case study. We will analysis single simulation that contains boundaries
-and phase defects, and simple enough to visually confirm.
+There exists a numerous amount methods to detect rotational activity \autocite{pikunov2023the, gurevich2019robust, li2020standardizing},
+making it is near impossible to create a comparative study or full review.
+Therefore, we opted to give a demonstration of the effect
+that boundaries and phase defect can have on the analysis.
+The effect is most visible when
+
+analysis will be done
+by a straightforward implementation of phasemapping where we naively assume
+that the phase is smooth across the complete tissue.
+Secondly, we analyse the simulation again using a straightforward approach,
+but now accounting for possible obstacles and boundaries.
+Finally, we will focus on each part of the simulation
+and try to give context and explain the relevance of each pattern.
 
 \subsection{Setup of the Simulation}\label{setup-of-the-simulation}
 
