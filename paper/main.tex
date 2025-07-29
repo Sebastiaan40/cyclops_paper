@@ -49,36 +49,33 @@
 
 \section{Introduction}\label{introduction}
 
-Consider the simulation in figure~\ref{fig:comparison_snapshot_overview}.
-By visually inspecting the map, a linear rotor appears to turn
-counterclockwise in
-the bottom left \autocite{arno2021a}. Looking at the bottom right, you can
-see two wavefronts soon to collide with each other. At the top we find a
-more complex pattern. There is a non-conductive region around which
-three wavefronts are moving. One might recognize this pattern as a
-critical boundary with near-complete rotation; a pattern that plays an
-important role during ablation therapy.
+We present a simple simulation in figure~\ref{fig:comparison_snapshot_overview}.
+By visually inspecting the simulation, a linear rotor appears to turn
+counterclockwise in the bottom left \autocite{arno2021a}.
+Looking at the bottom right,
+you can see two wavefronts soon to collide with each other.
+At the top we find a more complex pattern.
+There is a non-conductive region around which three wavefronts are moving.
+One might recognize this pattern as a critical boundary with
+near-complete rotation;
+a pattern that plays an important role during ablation therapy.
 \autocite{duytschaever2024atrial, santucci2024identification}.
 
-While for this simple simulation, a visual inspection is reasonable, it
-is not considered as an optimal solution as it is subject to human
-mistakes. Instead, it would much more preferable to have a tool that
-would act as some kind of spell check where the error, in this case the
-rotational activity, is highlighted.
-A potential candidate for such tool is called phasemapping, which will
-be discussed in the next section. However, we will show that a naive
-implementation of phasemapping is not capable of analysing a map with
-large non-conductive regions and/or conductive blocks, such as the phase
-map described above. And it is not because the idea behind phasemapping
-is lacking. Rather, it's because a naive approach mistreats such maps.
+While for this simple simulation, a visual inspection is reasonable,
+it is not considered as an optimal solution as it is subject to human mistakes.
+Instead, it would much more preferable to have a tool
+that would act as some kind of spell check where the error,
+in this case the rotational activity, is highlighted.
 
-In this paper, we will summarize the idea behind phasemapping, putting
-emphasis on the requirements for which the standard implementation gives
-the correct result. We will then formally define conductive blocks and
-showcase how to extend standard phasemapping in order to treat
-conductive block and non-conductive regions properly.
-
-\section{Theory}\label{theory}
+A potential candidate for such tool is called phasemapping,
+which is a method that is often used for rotor detection (CITATION).
+While a naive implementation of phasemapping would detect rotors
+reasonably well,
+it struggles to analyse simulations with non-conductive regions or
+conductive blocks,
+such as the simulation picture above.
+This is not because the idea behind phasemapping is lacking.
+Rather, it's because a naive approach mistreats such simulations.
 
 \subsection{What is the phase index?}\label{what-is-the-phase-index}
 
@@ -226,6 +223,14 @@ such points that is smooth. In other words, there is no way of analysing
 all points separately and the next best thing that we can do, is
 calculating the phase index for the boundaries and the phase defect as a
 whole.
+
+\vspace{2em}
+
+\noindent In this paper, we will summarize the idea behind phasemapping, putting
+emphasis on the requirements for which the standard implementation gives
+the correct result. We will then formally define conductive blocks and
+showcase how to extend standard phasemapping in order to treat
+conductive block and non-conductive regions properly.
 
 \section{Methods}\label{methods}
 
