@@ -76,7 +76,7 @@ such as the simulation picture above.
 This is not because the idea behind phasemapping is lacking.
 Rather, it's because a naive approach mistreats such simulations.
 
-\subsection{What is the phase index?}\label{what-is-the-phase-index}
+\subsection{What is the Phase Index?}\label{what-is-the-phase-index}
 
 Phasemapping relies on a metric called the phase index,
 which is formally defined by
@@ -122,7 +122,7 @@ Stokes' theorem can be applied, giving
 
 \noindent This expression will always be zero,
 and thus, the only time that the phase index is different from zero will be when
-$\nabla \phi$ is not smooth or if $\phi$ is undefined in some part of $S$.
+$\nabla \phi$ is not smooth or if $\phi$ is undefined in some part of $S$ \autocite{herlin2012reconstruction}.
 This is exactly the case when a rotor is present in $S$,
 since at the rotor tip, the state is undefined.
 We also like to mention that Equation~\ref{eq:phase-index-stokes}
@@ -140,61 +140,69 @@ The phase index of this curve would then be equal to the sum of all rotor tips i
 This also explains why it is preferred to make the closed curves as small as possible
 if we want to use the phase index for rotor detection.
 
-When analysing an electro-anatomical map, we often want to know if there
-is some rotational activity present, since this is one of the mechanisms
-behind cardiac arrhythmia. To express rotational activity a bit more
-quantitative, we can state that, if there is a closed curve \(C\) around
-which the electrical excitation travels, there is rotational activity
-across that curve.
+Next, it should be mentioned that a non-zero phase index does not necessarily represent rotation of the wavefront.
+While it is true that if there is rotational activity,
+we can always find a curve with a non-zero phase index,
+the phase index only indicates that travelling across that curve,
+the phase has shifted with a multiple of the period.
+To make this statement more concrete,
+we have included a pattern in the simulation that is surrounded by a curve with a non-zero index,
+but does not show any rotation.
 
-We can get an even clearer expression if we describe the state of each
-point at a certain time with a single variable. Considering that the
-state of each point changes periodically, the variable can be any scalar
-that is lying onto the unit circle. This variable is referred to as the
-phase \(\Phi\).
+Finally, we want to emphasize that the phase index is only defined if $\phi$ is smooth across $C$.
+This brings us to the main topic of this paper.
 
-For a phase field \(\Phi(x, t)\), which describes the state of each
-point in a two-dimensional orientable manifold M (e.g.~a plane or the
-surface of a sphere), it holds that if \(\Phi\) is smooth across \(C\),
-and we follow \(\Phi\) along \(C\) until we end up back at the starting
-point, The value will now be the same, or it will be shifted by
-\(2\pi\). This expression can also be written down in a mathematical
-formula.
+\subsection{Phase Defects, Scar Tissue and Boundaries}
 
-\noindent where \(I\) is called the phase index of the curve. Using Stokes'
-theorem, the phase index can also be written as
+The requirement that $\phi$ is smooth across any curve is not trivial.
+An obvious example is a curve that crosses a rotor tip,
+but other patterns that do not involve rotor tips can also be found.
+Like in \textcite{arno2021a, tomii2021spatial}, which discuss the existence of phase defect,
+which can be described as discontinuities in the phase field.
+These discontinuities arise when the wavefront hits a region that is still in refractory,
+forming a line where one side is excited and the other side repolarizing.
+These phases defects form our first main problem,
+since it is not possible to find a curve that goes only around one point laying on the defect.
+The best we can do is to draw a curve around this defect and calculated its phase index.
 
-\noindent In case \(\Phi\) is differentiable across S, the index \(I\) is zero.
-Which means that \(I\) is only non-zero if a singular point is present
-in S. \autocite{herlin2012reconstruction} This singular point is exactly
-what a rotor tip or spiral core is being identified with.
+Another example where the $\phi$ is not smooth,
+can be found in clinical practice.
+When a patient has an arrhythmia,
+the physician could perform ablation therapy
+and burn  certain regions of the tissue.
+The cells in these patches of scar have an undefined phase.
+While the bulk of these patches don't show interesting behaviour,
+the boundary stall can.
+However, just like with phase defect,
+the best we can do is draw a curve around the non-conductive tissue
+and calculate its index.
 
-\subsection{Properties of the phase
-index}\label{properties-of-the-phase-index}
+Finally, we should consider the boundaries.
+This can be the outer boundaries of a 2D simulation,
+or, a more clinical example, the mitral valve and pulmonary veins in the left atrium.
+One can see the similarity between a non-conductive patch
+and a hole in the tissue.
+Therefore, boundaries can be treated similar as non-conductive patches.
+This also enables us to capture patterns such as anatomical reentries~\autocite{duytschaever2024atrial}.
+An overview on how to adjust the curves when phase defects and boundaries are present is given in Figure~\ref{fig:index_calculation}
+Notice, that the curve around the outer boundary is oriented in clockwise direction.
+This convention has been proposed in \textcite{davidsen2004topological} to make sure
+that the total phase index is conserved for compact surfaces.
 
-The first thing we want you to notice, is that the phase index is a
-property of a closed curve. This can be any closed curve, but for our
-purposes, we will stick to closed curves that do not intersect
-themselves.
+\begin{figure}[ht]
+  \centering
+  \includefig{index_calculation}
+  \caption{Example of a bounded planar domain with holes. The domain
+    contains singular points at \(\pmb{x}_1\), \ldots, \(\pmb{x}_n\) and
+    holes \(H_1\), \ldots{} \(H_{m-1}\), with the outer boundary
+    representing the final hole \(H_m\). Curves are drawn around each
+    singular point and hole with the arrow represent the direction of
+    integration. In addition, a phase defect is presented together with a
+  curve over which to integrate to get the phase index of the defect.}
+  \label{fig:index_calculation}
+\end{figure}
 
-Secondly, since the phase index is an integer and the manifold is
-differentiable, the curve can be continuously deformed without altering
-the phase index. Therefore, the phase index is conserved for continuous
-deformations, which is why it is called a topological charge. This
-property allows us to identify a phase index to a singular point as
-follows: The phase index of a singular point is the phase index of any
-closed curve that surrounds that point and nothing else.
-
-This idea can be generalized by stating that the phase index of a closed
-curve is equal to the total phase index of everything in that curve. For
-example, if we draw a curve around multiple singular points \(x_1\),
-\ldots, \(x_N\), the phase index \(I_C\) of the curve is equal to that
-of the sum of the phase indices \(I_n\) of all singular points inside.
-
-\begin{equation}
-  I_C = \sum^N_{n=1} I_n
-  \label{eq:index-curve}
-\end{equation}
+\subsection{Conservation of Total Phase Index}
 
 \noindent To build further on this idea, suppose that we have defined a phase
 field \(\Phi\) on a closed surface \(S\). If we now draw a curve on that
@@ -225,46 +233,6 @@ extension then gives us the following equation:
 \noindent where \(x_n\) are the singular points in \(S\) and \(H_m\) are the
 holes. From now on we will refer to this as the index theorem.
 
-\subsubsection{How to handle conduction blocks or phase
-defects}\label{how-to-handle-conduction-blocks-or-phase-defects}
-
-So far we have defined the phase index for singular points and holes,
-but now we need to remind ourselves about which requirements need to be
-fulfilled in order to do so. For our purposes, the most important one is
-that the phase field needs to be smooth across the closed curve. One
-example where this is not fulfilled are singular points. Another example
-that applies to cardiac tissue is when the wavefront of the excitation
-wave hits a refractory region. This forms a discontinuity or defect in
-the form of a line. A full discussion about this phenomenon can be found
-in \autocite{tomii2021spatial}, but for our purpose it is enough to define a
-phase defect as a discontinuity in the phase field.
-
-Figure~\ref{fig:index_calculation} show an example on how to adjust the curves
-when phase defects and holes are present.
-
-\begin{figure}[ht]
-  \centering
-  \includefig{index_calculation}
-  \caption{Example of a bounded planar domain with holes. The domain
-    contains singular points at \(\pmb{x}_1\), \ldots, \(\pmb{x}_n\) and
-    holes \(H_1\), \ldots{} \(H_{m-1}\), with the outer boundary
-    representing the final hole \(H_m\). Curves are drawn around each
-    singular point and hole with the arrow represent the direction of
-    integration. In addition, a phase defect is presented together with a
-  curve over which to integrate to get the phase index of the defect.}
-  \label{fig:index_calculation}
-\end{figure}
-
-\subsection{Detecting rotational activity in cardiac
-tissue}\label{detecting-rotational-activity-in-cardiac-tissue}
-
-A well-known method that exploits the idea of phase indices is called
-phasemapping. With phasemapping, the cardiac activation map is scanned
-across with a small area and the phase index is computed along the
-circumference of this area. Since this method is mostly used while
-analysing rotors, the scanning area is made as small as possible in
-order to ensure that only one singular point lies within the area.
-
 We argue that using phasemapping will give an incomplete analysis
 because the cardiac can have phase defects and boundaries for which the
 points that lie on them cannot be properly analysed using this method
@@ -275,7 +243,7 @@ all points separately and the next best thing that we can do, is
 calculating the phase index for the boundaries and the phase defect as a
 whole.
 
-\vspace{2em}
+\vspace{1em}
 
 \noindent In this paper, we will summarize the idea behind phasemapping, putting
 emphasis on the requirements for which the standard implementation gives
@@ -283,6 +251,32 @@ the correct result. We will then formally define conductive blocks and
 showcase how to extend standard phasemapping in order to treat
 conductive block and non-conductive regions properly.
 
+\subsection{Properties of the phase
+index}\label{properties-of-the-phase-index}
+
+The first thing we want you to notice, is that the phase index is a
+property of a closed curve. This can be any closed curve, but for our
+purposes, we will stick to closed curves that do not intersect
+themselves.
+
+Secondly, since the phase index is an integer and the manifold is
+differentiable, the curve can be continuously deformed without altering
+the phase index. Therefore, the phase index is conserved for continuous
+deformations, which is why it is called a topological charge. This
+property allows us to identify a phase index to a singular point as
+follows: The phase index of a singular point is the phase index of any
+closed curve that surrounds that point and nothing else.
+
+This idea can be generalized by stating that the phase index of a closed
+curve is equal to the total phase index of everything in that curve. For
+example, if we draw a curve around multiple singular points \(x_1\),
+\ldots, \(x_N\), the phase index \(I_C\) of the curve is equal to that
+of the sum of the phase indices \(I_n\) of all singular points inside.
+
+\begin{equation}
+  I_C = \sum^N_{n=1} I_n
+  \label{eq:index-curve}
+\end{equation}
 \section{Methods}\label{methods}
 
 There exists a numerous amount implementations and methods to detect
@@ -482,6 +476,14 @@ collide with each other before completing a turn. Yet, this time the
 total phase index is non-zero.
 
 \section{Discussion}\label{discussion}
+
+Secondly, since the phase index is an integer and the manifold is
+differentiable, the curve can be continuously deformed without altering
+the phase index. Therefore, the phase index is conserved for continuous
+deformations, which is why it is called a topological charge. This
+property allows us to identify a phase index to a singular point as
+follows: The phase index of a singular point is the phase index of any
+closed curve that surrounds that point and nothing else.
 
 The presented simulation is nothing out of the ordinary. It has only
 three main components: a linear core, rotation around a non-conductive
