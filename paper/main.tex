@@ -49,7 +49,7 @@
 
 \section{Introduction}\label{introduction}
 
-We present a simple simulation in figure~\ref{fig:comparison_snapshot_overview}.
+We present a snapshot of a simple simulation in figure~\ref{fig:comparison_snapshot_overview}.
 By visually inspecting the simulation, a linear rotor appears to turn
 counterclockwise in the bottom left \autocite{arno2021a}.
 Looking at the bottom right,
@@ -254,15 +254,13 @@ There exists a numerous amount methods to detect rotational activity \autocite{p
 making it is near impossible to create a comparative study or full review.
 Therefore, we opted to give a demonstration of the effect
 that boundaries and phase defect can have on the analysis.
-The effect is most visible when
-
-analysis will be done
-by a straightforward implementation of phasemapping where we naively assume
+This effect becomes most visible by comparing two approaches.
+Both approaches will use a straightforward implementation of phasemapping, but
+they will differ in the assumption that where made about the cardiac tissue.
+In the first approach, it is naively assumed
 that the phase is smooth across the complete tissue.
-Secondly, we analyse the simulation again using a straightforward approach,
-but now accounting for possible obstacles and boundaries.
-Finally, we will focus on each part of the simulation
-and try to give context and explain the relevance of each pattern.
+In the second approach, we account for possible obstacles and boundaries,
+and perform a phasemapping analysis afterwards.
 
 \subsection{Setup of the Simulation}\label{setup-of-the-simulation}
 
