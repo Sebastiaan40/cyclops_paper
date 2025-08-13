@@ -487,43 +487,45 @@ Because the sum of all indices is always zero,
 one could hypothesize that ablation strategies
 not affecting all structures with a non-zero index will not terminate the tachycardia.
 
-% Add discussion about minimal wavelength and the results of tomi et al
-
-Hopefully, one notices that non-conductive structures, boundaries and
-phase defects are all treated in the same manner.
-In case such structures have a non-zero phase index,
-it is quite natural to call them all as finite cores,
-referring to the finite circumference that all of them possess.
-We would like to highlight that no singular cores were found when
-applying the extended approach.
-This result aligns with the results from \autocite{tomii2021spatial, arno2021a},
-that states that all rotors are found around a phase defect (CHECK
-WHAT ARNO SAID).
+Another interesting remark is
+that the extended approach does not find any rotors.
+This result aligns with the results from \autocite{tomii2021spatial},
+that states that all rotors are found around a phase defect
 This could imply that only finite cores are possible.
 An implication that is also strengthened by the argument that the
 tissue has a finite minimal wavelength,
 or the smallest curve with a non-zero phase index has a finite circumference.
+And since non-conductive structures, boundaries
+and phase defects are all treated in the same manner,
+it is only natural to call them all finite cores in case they have a non-zero index.
 
+% Not sure if this is relevant
+This absence of rotors in the extended approach's result also
+indicates that the rotors found
+by using the naive approach are all due to integrating across phase defects.
+This could explain the surprising results in \textcite{li2020standardizing},
+where it was found that the outcome of rotor detection
+depends on the threshold for identifying phase jumps.
+In case only real phase jumps where present,
+the results would only vary when this threshold was set close to $2\pi$.
+But phase defect could be affected by this threshold
+at any value between $\pi$ and $2\pi$.
 
-This could explain the reason why using different thresholds to count phase jumps,
-gives different results \autocite{li2020standardizing}.
+\vspace{2em}
 
+\noindent To conclude this article,
+we acknowledge that the described approaches is probably too simplistic
+to analyse clinical or more complex data.
+Nevertheless, it should be clear
+that phase defects and non-conductive tissue have a major impact
+on the analysis of cardiac arrhythmia, even in this simple example.
+Therefore, we invite the reader to try to analyse this example with a state-of-the-art method
+and see how many pre -and post-processing steps are necessary to get the correct solution.
 
-
-Finally, one could argue that the naive approach that was used,
-was too simplistic and that current algorithms would do a better job at
-analysing this simulation.
-However, we have not encountered implementation of rotor detection
-that explicitly account for this.
-Rather than stating that the extended approach would yield better results,
-we imply that the current state-of-the-art algorithms would benefit
-from explicitly checking for phase defects.
-% add link to preregistration
-
-This paper is meant to serve as a theoretical backbone to understand how
-phasemapping can be used in a clinical setting. Researcher who are
-interested in testing these ideas, can have a look at our
-preregistration (LINK!!!).
+In case an adventurous clinician has stumbled upon this rather technical paper,
+we would like to refer them to our OSF page,
+which contains a study protocol and necessary tools
+to start a clinical study about localising finite cores during atrial tachycardia.
 
 \section{Data availability}\label{data-availability}
 
