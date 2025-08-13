@@ -462,7 +462,6 @@ total phase index is non-zero.
 
 \section{Discussion}\label{discussion}
 
-% I like this
 The presented simulation is nothing out of the ordinary.
 It has only three main components:
 a linear core, rotation around a non-conductive region and a phase defect.
@@ -473,7 +472,20 @@ from that of the extended approach.
 We argue that the result of the extended approach is more favourable
 as it aligns better with our visual inspection.
 
-% sum of all indices is not zero
+Additionally, the result of the naive approach does not fulfil the index theorem (Eq.~\ref{eq:index-theorem-extended}),
+implying that the analysis is incorrect.
+Indeed, the naive approach detects two rotors around the phase defect at the bottom right,
+but there is no rotation present at that location.
+Some people would dismiss these rotors tips
+by stating that they do not make a full rotation,
+but this argument would also dismiss the near-complete rotation
+found around the scar tissue.
+However, recent clinical studies indicate
+that this pattern plays a critical role in atrial tachycardia~\autocite{duytschaever2024atrial, santucci2024identification, takigawa2019a}.
+Its significance can be explained by the index theorem (Eq.~\ref{eq:index-theorem-extended}).
+Because the sum of all indices is always zero,
+one could hypothesize that ablation strategies
+not affecting all structures with a non-zero index will not terminate the tachycardia.
 
 % Add discussion about minimal wavelength and the results of tomi et al
 
@@ -492,22 +504,11 @@ An implication that is also strengthened by the argument that the
 tissue has a finite minimal wavelength,
 or the smallest curve with a non-zero phase index has a finite circumference.
 
+
 This could explain the reason why using different thresholds to count phase jumps,
 gives different results \autocite{li2020standardizing}.
 
-In contrast to the successful detection of rotors, we have demonstrated
-that phase defects can cause false positives, as seen in
-Figure~\ref{fig:zoom-defect}. Some people would dismiss these rotors tips
-by stating that they do not make a full rotation,
-but this argument would also dismiss the near-complete rotation
-found around the scar tissue.
 
-Not much attention is given to non-conductive structures, but they do
-play an import role in the clinical field. As for the pattern in the
-presented simulation, it turns out that this used to be dismissed as not
-important. However, recent studies have found that these play a critical
-role in the success of ablation therapies
-\autocite{duytschaever2024atrial, santucci2024identification, takigawa2019a}.
 
 Finally, one could argue that the naive approach that was used,
 was too simplistic and that current algorithms would do a better job at
