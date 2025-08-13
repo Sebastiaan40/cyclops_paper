@@ -462,63 +462,20 @@ total phase index is non-zero.
 
 \section{Discussion}\label{discussion}
 
-Secondly, since the phase index is an integer and the manifold is
-differentiable, the curve can be continuously deformed without altering
-the phase index. Therefore, the phase index is conserved for continuous
-deformations, which is why it is called a topological charge. This
-property allows us to identify a phase index to a singular point as
-follows: The phase index of a singular point is the phase index of any
-closed curve that surrounds that point and nothing else.
+% I like this
+The presented simulation is nothing out of the ordinary.
+It has only three main components:
+a linear core, rotation around a non-conductive region and a phase defect.
+That is it. No anisotropic conductivity, no fibres and no noise.
+The simulation is also of a good resolution, which also favours phasemapping.
+Yet, the result of the naive approach is quite different
+from that of the extended approach.
+We argue that the result of the extended approach is more favourable
+as it aligns better with our visual inspection.
 
-The presented simulation is nothing out of the ordinary. It has only
-three main components: a linear core, rotation around a non-conductive
-region and a phase defect. That is it. No anisotropic conductivity, no
-fibres and no noise. The simulation is also of a good resolution, which
-also favours phasemapping. Yet, it can cause trouble for phasemapping if
-not treated properly.
+% sum of all indices is not zero
 
-As expected, phasemapping is good at finding rotors, which is why both
-approaches find rotational activity at the bottom left. Nevertheless,
-the rotor in this simulation has a linear core and, as discussed in
-\autocite{arno2021a, tomii2021spatial}, is different from a rotor tip.
-Discussing the phase defect instead of the rotor tip would also simplify
-the description of the rotor movement. Notice that the rotor tip is
-always attached to the phase defect. This means that you can split up
-the movement of the rotor tip as a rotation around the phase defect and
-the movement of the phase defect. What we are implying is that just the
-movement of the phase defect is enough to describe the dynamics of the
-system and that is generally less complex.
-
-In contrast to the successful detection of rotors, we have demonstrated
-that phase defects can cause false positives, as seen in
-Figure~\ref{fig:zoom-defect}. Some people would dismiss these rotors tips
-by stating that they do not make a full rotation, but this would require
-a visual inspection or post-processing steps. Accounting for phase
-defects dismisses these rotors already, reducing the necessary steps to
-get to the correct interpretation.
-However, phase defects do not tell the whole story. For example, looking
-at the phase defect, the discontinuity disappears when the wavefront is
-moving away from it, but the next wave still can't pass through it.
-Since the phase space of cardiac tissue can exhibit interfaces or
-defects, it is not necessarily guaranteed that phasemapping and waveback
--and front intersection points give the correct analysis. This could
-explain the reason why using different thresholds to count phase jumps,
-gives different results \autocite{li2020standardizing}.
-
-Not much attention is given to non-conductive structures, but they do
-play an import role in the clinical field. As for the pattern in the
-presented simulation, it turns out that this used to be dismissed as not
-important. However, recent studies have found that these play a critical
-role in the success of ablation therapies
-\autocite{duytschaever2024atrial, santucci2024identification, takigawa2019a}.
-Our naive implementation did not detect anything around the
-non-conductive tissue, but in case an implementation searches for rotors
-by looking at the endpoints of the wavefront, it would detect either one
-or three rotors. While a phase density map would then highlight the full
-boundary, the interpretation would be a bit messy. Especially if you
-consider rotors only to be true if they make a full rotation.
-Calculating the phase index of the boundary gives a clearer
-interpretation and is therefore preferred.
+% Add discussion about minimal wavelength and the results of tomi et al
 
 Hopefully, one notices that non-conductive structures, boundaries and
 phase defects are all treated in the same manner.
@@ -535,6 +492,23 @@ An implication that is also strengthened by the argument that the
 tissue has a finite minimal wavelength,
 or the smallest curve with a non-zero phase index has a finite circumference.
 
+This could explain the reason why using different thresholds to count phase jumps,
+gives different results \autocite{li2020standardizing}.
+
+In contrast to the successful detection of rotors, we have demonstrated
+that phase defects can cause false positives, as seen in
+Figure~\ref{fig:zoom-defect}. Some people would dismiss these rotors tips
+by stating that they do not make a full rotation,
+but this argument would also dismiss the near-complete rotation
+found around the scar tissue.
+
+Not much attention is given to non-conductive structures, but they do
+play an import role in the clinical field. As for the pattern in the
+presented simulation, it turns out that this used to be dismissed as not
+important. However, recent studies have found that these play a critical
+role in the success of ablation therapies
+\autocite{duytschaever2024atrial, santucci2024identification, takigawa2019a}.
+
 Finally, one could argue that the naive approach that was used,
 was too simplistic and that current algorithms would do a better job at
 analysing this simulation.
@@ -543,56 +517,7 @@ that explicitly account for this.
 Rather than stating that the extended approach would yield better results,
 we imply that the current state-of-the-art algorithms would benefit
 from explicitly checking for phase defects.
-
-\subsection{Future work}\label{future-work}
-
-The main goal of our research is to develop analytical tools for physicians
-that leverage theoretical insights.
-We think that extending phasemapping to handle non-conductive tissue
-and phase defects,
-can be useful when examining activation maps of atrial tachycardia.
-With that in mind, a few things need to be checked before
-phasemapping can be used in the clinical field.
-
-First up, the activation maps are generally speaking of lower resolution
-and contain noise.
-Previously, it was already shown that phasemapping does not perform well on
-noisy and low-resolution data \autocite{lootens2024directed} (CITATION LOW-RES).
-It would be interesting to replicated robustness analyses of
-phasemapping methods using the extended approach.
-Additionally, if one requires that only finite cores exist,
-the robustness of phasemapping could be increased even further.
-
-Secondly, we could apply fibrosis to the tissue.
-We hypothesize that this would not form any problems,
-since fibrotic tissue can be considered the same as non-conductive tissue.
-
-Finally, we believe that there still exist some improvements in
-constructing a phase field.
-As shown in Figure~\ref{fig:action_potential_and_phase},
-the phase that is created with the Hilbert transform is quite steep
-around phase jumps,
-which makes differentiating the phase jumps from the phase defects
-more difficult.
-Additionally, it does not account for that fact that cells can linger
-in the resting state.
-Some new definitions are proposed by~\cite{kabus2022numerical} that
-could improve the construction of phases.
-
-\section{Conclusion}\label{conclusion}
-
-\begin{itemize}
-    \tightlist
-  \item
-    Properly addressing phase defects and adapting the curve can make
-    phasemapping suitable for analysing clinical cases.
-  \item
-    Refer to preregistration.
-  \item
-    Additionally, we encourage research groups to try out this simple
-    example to see whether their detection method can analyse this map
-    correctly. However, keep in mind Goodhart's Law
-\end{itemize}
+% add link to preregistration
 
 This paper is meant to serve as a theoretical backbone to understand how
 phasemapping can be used in a clinical setting. Researcher who are
