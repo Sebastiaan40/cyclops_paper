@@ -10,10 +10,6 @@ tissue = fw.CardiacTissue2D([n, n])
 tissue.mesh[n // 4 - 64 : n // 4 + 64, n // 2 - 64 : n // 2 + 64] = 0
 tissue.conductivity = 0.15 * np.ones([n, n])
 
-# show conductivity of mesh
-plt.imshow(tissue.mesh * tissue.conductivity)
-plt.show()
-
 # set up stimulation parameters:
 stim_sequence = fw.StimSequence()
 s2 = fw.StimVoltageCoord2D(60, 1, n // 4, 3 * n // 4, 0, n // 2)
@@ -27,14 +23,14 @@ stim_sequence.add_stim(s3)
 tracker_sequence = fw.TrackerSequence()
 u_tracker = fw.Animation2DTracker()
 u_tracker.variable_name = "u"
-u_tracker.dir_name = "data/demo_2"
+u_tracker.dir_name = "data/u"
 u_tracker.step = 20
 u_tracker.overwrite = True
 tracker_sequence.add_tracker(u_tracker)
 
 v_tracker = fw.Animation2DTracker()
 v_tracker.variable_name = "v"
-v_tracker.dir_name = "data/demo_2"
+v_tracker.dir_name = "data/v"
 v_tracker.step = 20
 v_tracker.overwrite = True
 tracker_sequence.add_tracker(v_tracker)
@@ -52,37 +48,37 @@ fenton_karma.state_loader = fw.StateLoader("data/s1_state")
 fenton_karma.tracker_sequence = tracker_sequence
 
 # run the model:
-fenton_karma.run()
+# adjust the number of threads if needed
+fenton_karma.run(num_of_theads=15)
+
 
 # calculate phase:
 output_dir = Path("data/phase")
 u_path = Path(u_tracker.path, u_tracker.dir_name)
 v_path = Path(v_tracker.path, v_tracker.dir_name)
-if output_dir.is_dir():
+if not output_dir.is_dir():
     output_dir.mkdir(parents=True)
 
-n = len(list(u_path.glob("*.npy")))
-u_min_val = np.inf
-u_max_val = -np.inf
-v_min_val = np.inf
-v_max_val = -np.inf
 
-for i in range(n):
-    u = np.load(u_path / f"{i}.npy")
-    u_min_val = min(u_min_val, np.nanmin(u))
-    u_max_val = max(u_max_val, np.nanmax(u))
+track_u = []
+track_v = []
+x, y = 200, 200
 
-    v = np.load(v_path / f"{i}.npy")
-    v_min_val = min(v_min_val, np.nanmin(u))
-    v_max_val = max(v_max_val, np.nanmax(u))
-
-for i in range(n):
-    u = np.load(u_path / f"{i}.npy")
-    v = np.load(v_path / f"{i}.npy")
-    u = 2 * (u - u_min_val) / (u_max_val - u_min_val) - 1
-    v = 2 * (v - v_min_val) / (v_max_val - v_min_val) - 1
+u_ref = 0.4
+v_ref = 0.1
+timesteps = len(list(u_path.glob("*.npy")))
+for i in range(timesteps):
+    u = np.load(u_path / f"{i}.npy") - u_ref
+    v = np.load(v_path / f"{i}.npy") - v_ref
+    track_u.append(u[x, y].copy())
+    track_v.append(v[x, y].copy())
     phase = np.arctan2(u, v)
+    phase[tissue.mesh != 1] = np.nan
     np.save(output_dir / f"{i}.npy", phase)
+
+# visually confirm that the orbit in phase space goes around the origin
+plt.plot(track_u, track_v)
+plt.show()
 
 # create video:
 fw.Animation2DBuilder().write(
@@ -92,4 +88,5 @@ fw.Animation2DBuilder().write(
     cmap="twilight",
     clear=False,
     prog_bar=True,
+    fps=100,
 )
