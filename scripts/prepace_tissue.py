@@ -36,11 +36,11 @@ fenton_karma.state_saver = state_saver
 fenton_karma.tracker_sequence = tracker_sequence
 
 # run the model:
-fenton_karma.run()
+# adjust the number of threads if needed
+fenton_karma.run(num_of_theads=15)
 
 # plot action potential:
 time = np.arange(len(action_pot_tracker.output)) * fenton_karma.dt
 plt.plot(time, action_pot_tracker.output)
-plt.xlabel("t[ms]")
-plt.ylabel("E[mV]")
+plt.xlabel("timestep")
 plt.show()
