@@ -1,68 +1,54 @@
 from pathlib import Path
 
-import cyclops.meshtools as mt
-import cyclops.meshtools.filters as mf
+import cyclops.cycletools as ct
+import cyclops.phasetools as ft
 import cyclops.visualtools as vt
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pyvista as pv
-import scipy.signal as ss
 from cyclops.extended_phasemapping import ExtendedPhaseMapping
-from natsort import natsorted
 
-sim_files = "data/demo_2/"
-files = natsorted(Path(sim_files).glob("*.npy"))
+data_dir = Path("data")
+u_path = data_dir / "u"
+phase_path = data_dir / "phase"
 
-# set up coordinates of the mesh
-nx, ny = np.load(files[0]).shape
-x = np.linspace(0, 1, nx)
-y = np.linspace(0, 1, ny)
-xx, yy = np.meshgrid(x, y)
-points = np.column_stack((xx.ravel(), yy.ravel(), np.zeros(xx.size)))
-columns = pd.MultiIndex.from_product([["coords"], ["x", "y", "z"]])
-vertices = pd.DataFrame(points, columns=columns)
+# load action potentials and phases
+list_of_phases = []
+list_of_action_potentials = []
 
-# set up triangulated cells of the mesh
-faces = pv.PolyData(points).delaunay_2d().faces.reshape(-1, 4)[:, 1:]
-columns = pd.MultiIndex.from_product([["faces"], ["vertex_0", "vertex_1", "vertex_2"]])
-triangles = pd.DataFrame(faces, columns=columns)
-
-# load action potentials
-jump = 4
+step = 4
 start = 2800
-list_of_action_pots = []
-for file in files[start::jump]:
-    list_of_action_pots.append(np.load(file).ravel())
+stop = len(list(u_path.glob("*.npy")))
+for i in range(start, stop, step):
+    list_of_action_potentials.append(np.load(u_path / f"{i}.npy").ravel())
+    list_of_phases.append(np.load(phase_path / f"{i}.npy").ravel())
 
-action_pots = np.column_stack(list_of_action_pots)
-mask = np.all(action_pots == action_pots[:, 0, None], axis=1)
-action_pots[mask] = np.nan
-
-# calculate phases
-start = 50
-stop = 500
-hilbert = ss.hilbert(action_pots - np.nanmean(action_pots))
-phases = -1 * np.angle(-1j * hilbert)[:, :stop]
+phases = np.column_stack(list_of_phases)
+action_potentials = np.column_stack(list_of_action_potentials)
+phases = np.tanh((-1 * phases) % (2 * np.pi) - np.pi) * np.pi
 
 # plot phase and action potential of one point
-plt.plot(phases[500])
-plt.plot(action_pots[500, :stop])
+plt.plot(phases[500], label="phase", marker=".")
+plt.plot(action_potentials[500, :stop], label="normalized action potential")
+plt.xlabel("timesteps")
+plt.legend()
+plt.savefig("paper/figures/ap_phase.svg")
 plt.show()
 
-# create mesh
-columns = pd.MultiIndex.from_product([["phases"], range(phases.shape[1])])
-vertices = pd.concat((vertices, pd.DataFrame(phases, columns=columns)), axis=1)
-mesh = mt.Mesh(vertices, triangles)
+# create phase field
+nx, ny = np.load(u_path / "0.npy").shape
+polydata = pv.ImageData(dimensions=(nx, ny, 1), spacing=(1, 1, 1)).extract_surface()
+phasefield = ft.PhaseField(polydata, pd.DataFrame(phases))
 
-# run the extended phasemapping method
-mesh_filters = [mf.CellPhaseDiffFilter(0.06 * np.pi)]
-epm = ExtendedPhaseMapping(mesh, mesh_filters)
+phasefield_filters = [ft.NaNFilter(), ft.PhaseDiffFilter(0.05 * np.pi)]
+cycle_extractors = [ct.extract_cell_cycles, ct.extract_boundary_cycles]
+epm = ExtendedPhaseMapping(phasefield, phasefield_filters, cycle_extractors)
 epm.run()
 
 # visualise results
 slider = vt.Slider(epm)
-slider.boundary_actors = slider.add_boundaries(0)
+slider.add_boundaries()
 slider.show()
 
 # Create phase density map
