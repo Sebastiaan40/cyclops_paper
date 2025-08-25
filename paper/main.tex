@@ -45,57 +45,55 @@
   \vspace{2em}
 ]
 
-\section{Introduction}\label{introduction}
+\section{Introduction}
 
 Phase mapping is a method introduced in \textcite{1995experimental_rabbit_fibrillation_gray}
 for the detection of rotational electrical activity, so-called functional re-entry,
 in optical maps of experimental rat and sheep data.
 This was done by creating phase maps of the electrical activity and identifying phase singularities,
 points around which the phase changes continuously from 0 to 2$\pi$,
-giving them a non-zero topological charge.
+giving them a non-zero phase index.
 The first widespread algorithmic implementation was based on convolution operations commonly used in image processing \cite{2001theoretical_convolution_method_bray}.
 Subsequently, an implementation was developed for 2D triangulated meshes \cite{2007simulation_mesh_ring_method_rantner}.
 Since then, numerous papers were published that uses phasemapping for analyzing different datasets
 ranging from simulated functional re-entry \cite{2018simulation_benchmark_wavelength_fibrosis_roney, 2024simulation_benchmark_fibrosis_meandering_noise_lootens}
 to clinical fibrillation \cite{2016clinical_af_fp_vijayakumar, 2016clinical_af_signalprocessing_roney, 2017clinical_af_fp_kuklik, 2017clinical_benchmark_resolution_roney, 2020clinical_benchmark_pm_methods_li}.
 Several problems were apparent when detecting phase singularities attributed to:
-resolution \cite{2017clinical_benchmark_resolution_roney},
-cycle length \cite{2018simulation_benchmark_wavelength_fibrosis_roney},
-fibrosis \cite{2018simulation_benchmark_wavelength_fibrosis_roney, 2024simulation_benchmark_fibrosis_meandering_noise_lootens},
-algorithmic implementation \cite{2024simulation_benchmark_fibrosis_meandering_noise_lootens, 2020clinical_benchmark_pm_methods_li},
-meandering \cite{2024simulation_benchmark_fibrosis_meandering_noise_lootens},
-noise \cite{2024simulation_benchmark_fibrosis_meandering_noise_lootens},
-conduction block \cite{2024simulation_benchmark_fibrosis_meandering_noise_lootens, 2025simulation_benchmark_pm_dgm_hhz_lootens}
-and boundaries \cite{2025simulation_benchmark_pm_dgm_hhz_lootens}.
+resolution, cycle length, fibrosis, algorithmic implementation, meandering, noise, conduction block, and boundaries. \cite{2017clinical_benchmark_resolution_roney, 2018simulation_benchmark_wavelength_fibrosis_roney, 2024simulation_benchmark_fibrosis_meandering_noise_lootens, 2020clinical_benchmark_pm_methods_li, 2025simulation_benchmark_pm_dgm_hhz_lootens}
 
-We present a snapshot of a simple simulation in figure~\ref{fig:comparison_snapshot_overview}.
-By visually inspecting the simulation, a linear rotor appears to turn
-counterclockwise in the bottom left \autocite{arno2021a}.
-Looking at the bottom right,
-you can see two wavefronts soon to collide with each other.
-At the top we find a more complex pattern:
-there is a non-conductive region around which three wavefronts are moving.
-One might recognize this pattern as a critical boundary with
-near-complete rotation;
-a pattern that plays an important role during ablation therapy.
-\autocite{duytschaever2024atrial, santucci2024identification}.
+Recent developments have recognized slow conduction zones,
+modelled by phase defects,
+as being equally important as phase singularities \cite{tomii2021spatial, 2021experimental_phasedefect_method_arno}.
+Furthermore, we recently implemented a new method called DGM-TOP based
+on the ideas of PM for the detection of anatomical re-entry in clinical atrial tachycardia \cite{2025clinical_anatomical_hole_pm_vandenabeele}.
+% In this paper we claim that problems of PM arise
+% due to an incorrect understanding of rotational activity in cardiac fibrillation.
+% Specifically, we claim that the concept of phase singularity is incomplete,
+% as there is always a finite surface around which electrical activity rotates.
 
-While for this simple simulation, a visual inspection is reasonable,
-it is not considered as an optimal solution as it is subject to human mistakes.
-Instead, it would much more preferable to have a tool
-that would act as some kind of spell check where the error,
-in this case the rotational activity, is highlighted.
-A potential candidate for such tool is called phasemapping,
-which is a method that is often used for rotor detection (CITATION).
 While a naive implementation of phasemapping would detect rotors
 reasonably well,
-it struggles to analyse simulations with non-conductive regions or
+it struggles to analyze simulations with non-conductive regions or
 conductive blocks,
 such as the simulation pictured above.
 This is not because the idea behind phasemapping is lacking.
 Rather, it's because a naive approach mistreats such simulations.
 
-\subsection{What is the Phase Index?}\label{what-is-the-phase-index}
+By combining the ideas from PM, phase defects and DGM-TOP, we realize that the PM implementation by Bray et al. is mathematically incorrect.
+The method sums the phase gradient along infinitesimal loops which potentially go through regions of conduction block or scar tissue, which translates to the mathematical error of integrating through a phase discontinuity.
+
+To tackle this fundamental problem, we propose a novel method which replaces phase singularities with topologically charged boundaries.
+These boundaries are two-dimensional surface structures with non-zero phase index and can be classified into four types.
+Within this method, we generalize re-entry to activation patterns, also categorized into four types, defined by both the phase index and the number of adjacent wavefronts.
+We claim that our method applies not only to functional re-entry in fibrillation, but also to anatomical re-entry in tachycardia, yielding a more generalized approach to re-entry detection.
+We propose an implementation of this method we call Extended Phase Mapping (EPM) which is based on cutting phase defects out of the surface mesh, extracting surface boundaries, and calculating their charge.
+We apply EPM to eight simple simulations: four illustrating the boundary types and four illustrating the activation patterns, generated with our open-source finite-difference Python package Finitewave CITATION.
+Finally, we apply EPM to an experimental optical mapping recording of ventricular fibrillation in a rat heart.
+
+
+\subsection{Background}
+
+\subsubsection{What is the Phase Index?}
 
 Phasemapping relies on a metric called the phase index,
 which is formally defined by
@@ -108,7 +106,7 @@ which is formally defined by
 \noindent where $C$ is a closed curve
 and $\phi$ is referred to as the phase field.
 The phase field $\phi$ can be any scalar field of which the values are periodic.
-The phase index can be used to analyse cardiac activation maps
+The phase index can be used to analyze cardiac activation maps
 by realizing that the state of a cardiac cell changes periodically;
 a cell can go from resting state to an excited state,
 and after a while it repolarizes back to its resting state (CITATION).
@@ -179,7 +177,7 @@ but does not show any rotation.
 Finally, we want to emphasize that the phase index is only defined if $\phi$ is smooth across $C$.
 This brings us to the main topic of this paper.
 
-\subsection{Phase Defects, Scar Tissue and Boundaries}
+\subsubsection{Phase Defects, Scar Tissue and Boundaries}
 
 The requirement that $\phi$ is smooth across any curve is not trivial.
 An obvious example is a curve that crosses a rotor tip,
@@ -200,7 +198,7 @@ When a patient has an arrhythmia,
 the physician could perform ablation therapy
 and burn  certain regions of the tissue.
 The cells in these patches of scar have an undefined phase.
-While the bulk of these patches don't show interesting behaviour,
+While the bulk of these patches don't show interesting behavior,
 the boundary still can.
 However, just like with phase defect,
 the best we can do is draw a curve around the non-conductive tissue
@@ -219,7 +217,7 @@ Notice, that the curve around the outer boundary is oriented in clockwise direct
 This convention has been proposed in \textcite{davidsen2004topological} to make sure
 that the total phase index is conserved for compact surfaces.
 
-\subsection{Conservation of Total Phase Index}
+\subsubsection{Conservation of Total Phase Index}
 
 Let us first start of by looking at a closed surface $S$, meaning no boundaries,
 and a phase field that is smooth except in a finite number of singular points $\bm{x}_i$.
@@ -275,7 +273,17 @@ Therefore, in this paper we will try to present a simulation
 that contains all pitfalls which are discussed above,
 while still being simple enough to visually confirm the correct analysis.
 
-\section{Methods}\label{methods}
+\section{Methods}
+
+First, we describe our four categories of boundaries: (1) scar boundaries, (2) surface boundaries, (3) functional boundaries and (4) hybrid boundaries and four activation pattern types: (1) simple uncharged (2) complex uncharged (3) simple charged (4) complex charged.
+Second, we describe the naive implementation of PM and its problems. Third, we introduce our improved implementation of PM that correctly handles boundaries. Fourth, we describe the simulation protocol of the eight simulations. Finally, we present the experimental optical mapping recording of ventricular fibrillation in a rat heart.
+\subsection{Definitions: types of boundaries and activation patterns}
+
+% - phase index integral definition and equivalent practical definition using phasejumps
+% - Intuition behind idea shift: from phase singularities to boundaries (Stokes theorem)
+% - Boundary types: scar, surface, functional, hybrid
+% - Topologically uncharged activation patterns: simple (2 wavefronts), complex (4, 6, 8, ... wavefronts)
+% - Topologically charged activation patterns: simple (1 wavefront), complex (2, 3, 4, ... wavefronts)
 
 There exists a numerous amount methods to detect rotational activity \autocite{pikunov2023the, gurevich2019robust, li2020standardizing},
 making it is near impossible to create a comparative study or full review.
@@ -287,9 +295,9 @@ they will differ in the assumption that where made about the cardiac tissue.
 In the first approach, it is naively assumed
 that the phase is smooth across the complete tissue.
 In the second approach, we account for possible obstacles and boundaries,
-and perform a phasemapping analysis afterwards.
+and perform a phasemapping analysis afterward.
 
-\subsection{Setup of the Simulation}\label{setup-of-the-simulation}
+\subsection{Setup of the Simulation}
 
 As it is not required to have realistic geometries to induce phase
 defects, We chose to create a simulation on a homogeneous 2D grid. This
@@ -319,8 +327,7 @@ computational time, we lowered the conductivity of the mesh. Finally, we
 added a phase defect using a third stimulus in a small region just
 before it goes out of refractory.
 
-\subsection{Implementation of
-phasemapping}\label{implementation-of-phasemapping}
+\subsection{Implementation of phasemapping}
 
 To highlight the influence of phase defects and boundaries, we will
 compare two implementations of phasemapping: one where the simulation is
@@ -330,7 +337,9 @@ were we take into account phase defects and boundaries. This second
 implementation is basically an extension of the first one, so we will
 refer to it as extended phasemapping.
 
-\subsection{Naive Phasemapping}\label{naive-phasemapping}
+\subsection{Naive implementation of Phasemapping}
+% - Orientation of mesh elements (implicitly done in vtk)
+% - Detection of phase singularities using practical definition for mesh elements
 
 The first step was to convert the action potential to a phase field.
 This was done using taking the angle Hilbert transform of the action
@@ -374,7 +383,11 @@ number of phase jumps. An algorithm for this will look like:
     of positive and negative phase jumps respectively.
 \end{enumerate}
 
-\subsection{Extended Phasemapping}\label{extended-phasemapping}
+\subsection{Improved implementation of PM correctly handling boundaries}
+% - Localization of boundaries: scar and functional (model as phase defect, detect using phase difference threshold), surface (vtk methods) + hybrid
+% - Orientation of boundaries (implicitly done in vtk)
+% - Detection of charged boundaries using practical definition for boundaries
+% - Mention computation time complexity
 
 To extend the naive approach, the first thing to do is localizing the
 phase defects. Remember that phase defects are defined as
@@ -395,27 +408,27 @@ Finally, the boundaries and holes are extracted as polygons. The naive
 phasemapping approach (see previous section) is then applied to these
 polygons together with the remaining cells.
 
-\section{Results}\label{results}
+\subsection{Comparison of both methods}
+% - Scar boundaries: experimentally induced ischemia
+% - Surface boundaries: 2D image boundary
+% - Functional boundaries: fibrillation causes many front-tail interactions
+% - Hybrid boundaries: scar + functional, surface + functional + scar
+% - Uncharged patterns: functional block + surface boundary + anatomical scar
+% - Charged patterns: functional + surface + hybrid boundaries
+% - Noise: possible LAT annotations of ischemic cells
 
-Looking back at Figure~\ref{fig:comparison_snapshot_overview}, it is
-clear that the naive
-and extended approach does not give the result. Notice that the naive
-approach localizes rotational activity in the bottom right and left
-while the extended approach localizes rotational activity in the bottom
-right and around the non-conductive region at the top. Moreover, the
-analysis of the naive approach does not satisfy the index theorem given
-in equation~\ref{eq:index-theorem-extended}. This should raise some
-suspicion that this analysis
-inaccurate.
+\section{Results}
+
+\subsection{Basic simulations}
 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=\columnwidth]{zoom_rotor.png}
   \caption{Zoom of the bottom left of the simulation, showcasing a
     counterclockwise rotation. Left: A snapshot at time step 172, with the
-    colours represent the phase of the points at that time step. Rotors and
+    colors represent the phase of the points at that time step. Rotors and
     critical cycles are annotated in red. Right: The phase density map taken
-    across the entire time of the simulation. The colours represent the
+    across the entire time of the simulation. The colors represent the
     number of time steps that a point was annotated. A log scale was used to
     enhance visibility. The results of the naive approach are displayed at
   the top, and the results of the extended approach the bottom.}
@@ -426,7 +439,7 @@ First, let's focus on the bottom left (see Figure~\ref{fig:zoom-rotor}).
 Both approaches identify rotational activity in this region, and by
 comparing both point density maps, it is clear that they also recognize
 a similar drift. However, the extended approach detects a phase defect
-at the centre of the rotational activity, indicating that this is a
+at the center of the rotational activity, indicating that this is a
 linear rotor, while this information is not present in the analysis of
 the naive approach.
 
@@ -435,7 +448,7 @@ the naive approach.
   \includegraphics[width=\columnwidth]{zoom_defect.png}
   \caption{Zoom of the bottom right of the simulation, showcasing a phase
     defect without rotation. From left to right, snapshots are taken at time
-    steps 157, 177 and 235. The colours represent the phase of the points at
+    steps 157, 177 and 235. The colors represent the phase of the points at
     that time step. (Counter)clockwise rotation is annotated in red (blue)
     and phase defect without rotation is annotated in white. The results of
     the naive approach are displayed at the top, and the results of the
@@ -460,7 +473,7 @@ cancel each other out.
     non-conductive region. Only the results of the extended approach are
     shown, since the naive approach did not detect anything. From left to
     right and top to bottom, snapshots are taken at time steps 132, 172 and
-    198. The colours represent the phase of the points at that time step and
+    198. The colors represent the phase of the points at that time step and
   critical cycles with clockwise rotation are annotated in blue.}
   \label{fig:zoom-reentry}
 \end{figure}
@@ -470,23 +483,37 @@ Figure~\ref{fig:zoom-reentry}). We now have the opposite situation as
 before at the bottom right: The extended approach finds rotational
 activity around the non-conductive tissue while the naive approach does
 not. A closer observation of the different snapshots reveals an
-interesting pattern: The number of wavefronts around the non-conductive
+interesting pattern: The number of wave fronts around the non-conductive
 tissue alternates between one and three. But what makes is even more
 peculiar is that none of the wavefronts makes a complete turn. This
 reminds us about the pattern seen in the bottom right where two rotors
 collide with each other before completing a turn. Yet, this time the
 total phase index is non-zero.
 
-\section{Discussion}\label{discussion}
+\subsection{Case study: optical mapping of experimental rat VF}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\columnwidth]{optical_mapping_results.png}
+  \caption{Detections of Naive Phase Mapping (left) and Extended Phase Mapping (right) for an experimental optical mapping recording of rat VF containing several activation patterns and boundary types.}
+  \label{fig:optical_mapping_results}
+\end{figure}
+
+\section{Discussion}
+
+% Main findings
+% - Naive approach violates the index theorem when scar or surface boundaries are present
+% - Naive approach dismisses PS that do not make a full rotation which neglects complex charged activation patterns
+% - For uncharged functional boundaries: no PS present in extended phase mapping, PS detected by naive approach integrate through phase defects (cite threshold values in Li)
 
 The presented simulation is nothing out of the ordinary.
 It has only three main components:
 a linear core, rotation around a non-conductive region and a phase defect.
-That is it. No anisotropic conductivity, no fibres and no noise.
-The simulation is also of a good resolution, which also favours phasemapping.
+That is it. No anisotropic conductivity, no fibers and no noise.
+The simulation is also of a good resolution, which also favors phasemapping.
 Yet, the result of the naive approach is quite different
 from that of the extended approach.
-We argue that the result of the extended approach is more favourable
+We argue that the result of the extended approach is more favorable
 as it aligns better with our visual inspection.
 
 Additionally, the result of the naive approach does not fulfil the index theorem (Eq.~\ref{eq:index-theorem-extended}),
@@ -528,15 +555,27 @@ the results would only vary when this threshold was set close to $2\pi$.
 But phase defect could be affected by this threshold
 at any value between $\pi$ and $2\pi$.
 
-\vspace{2em}
+% Previous research
+% - Tomii\cite{tomii2021spatial}: does not describe activation patterns of phase defect boundaries
+% - Arno\cite{2024simulation_feynman2D_arno}: unnecessary introduction of pivot charge + not all types of activation patterns and boundaries are described
+% - Lebert\cite{2021experimental_CNN_ps_detection_lebert}: AI approaches can be improved by taking into account phase defects and replacing phase singularities with charged boundaries.
 
-\noindent To conclude this article,
+% Limitations and future prospects
+% - No clinical data, but preliminary results show improved charged boundary detection in clinical tachycardia leading to improved ablation
+% - Single optical mapping VF case, but this case contains the fundamental mechanisms, so our analysis can guide future fibrillation research
+% - Restriction of functional and scar boundary detection using only 1 feature: phase difference. Future research should improve detection of functional and scar boundaries
+% - Restriction of method to 2D meshes. Preliminary research shows applicability for 3D VT simulation meshes by taking 2D slices.
+% - For the simplicity of the paper, signal smoothing, downsampling and noise effects were not extensively investigated. Future research should aim to test the robustness of charged boundary detection on these parameters
+
+\subsection{Conclusion}
+
+To conclude this article,
 we acknowledge that the described approaches is probably too simplistic
-to analyse clinical or more complex data.
+to analyze clinical or more complex data.
 Nevertheless, it should be clear
 that phase defects and non-conductive tissue have a major impact
 on the analysis of cardiac arrhythmia, even in this simple example.
-Therefore, we invite the reader to try to analyse this example with a state-of-the-art method
+Therefore, we invite the reader to try to analyze this example with a state-of-the-art method
 and see how many pre -and post-processing steps are necessary to get the correct solution.
 
 In case an adventurous clinician has stumbled upon this rather technical paper,
@@ -544,7 +583,7 @@ we would like to refer them to our OSF page (LINK!!!),
 which contains a study protocol and necessary tools
 to start a clinical study about localizing finite cores during atrial tachycardia.
 
-\section{Data availability}\label{data-availability}
+\section{Data availability}
 
 Readers who would like to reproduce our results are referred to this
 GitHub repository (LINK!!!), which contains the used code and some
