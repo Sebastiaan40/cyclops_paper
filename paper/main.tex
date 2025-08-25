@@ -92,7 +92,7 @@ while careful treatment restores the reliability of phasemapping.
 
 \subsection{Background}
 
-\subsubsection{What is the Phase Index?}
+\subsubsection{Phase Index}
 
 Phasemapping relies on a metric called the phase index,
 which is formally defined by
@@ -104,33 +104,31 @@ which is formally defined by
 
 \noindent where $C$ is a closed curve
 and $\phi$ is referred to as the phase field.
-The phase field $\phi$ can be any scalar field of which the values are periodic.
-The phase index can be used to analyze cardiac activation maps
-by realizing that the state of a cardiac cell changes periodically;
+The phase field $\phi$ can be any scalar field of which the values are periodic,
+typically normalized between $0$ and $2\pi$.
+As such, the phase index can be used to analyze cardiac activation maps
+by recognizing that the state of a cardiac cell changes periodically;
 a cell can go from resting state to an excited state,
-and after a while it repolarizes back to its resting state (CITATION).
-From now on, the phase $\phi$ will denote a value between $0$ and $2\pi$
-that represents the state of a cell.
+and after a while it repolarizes back to its resting state \cite{1984theoretical_scrollwaves_chemical_winfree}.
 
-% Might need a picture to give more intuition
+In case the phase field represents the local state of cardiac tissue,
+we also require that $\phi$ is smooth and defined across $C$.
+These requirements constrain the possible values of the phase index as follows:
+First, moving counterclockwise around $C$ changes $\phi(\bm{x})$ continuously.
+Next, since $\phi(\bm{x})$ is defined on $C$,
+the value of $\phi(\bm{x})$ after crossing the closed curve,
+should represent the same state as at the beginning.
+Hence, over a closed curve,
+$\phi(\bm{x})$ can only change by an integer multiple of $2\pi$.
 
-To get an understanding of what the phase index represents,
-we can imagine moving across the curve
-and looking at how the phase changes.
-Once we get back to our starting point,
-two possibilities can occur:
-Either the phase of the starting point has the same value as at the beginning,
-or the values has been shifted with a multiple of $2\pi$.
-Note that all possibilities represent the same state.
-However, in the last case, the phase index will be non-zero.
-In other words, the phase index tells us how the state of a cell changes when traversing over a curve.
-One possible curve for which the phase index is non-zero is a curve that surrounds a rotor.
-
-% This is somewhat confusing
-
-We can image that this curve follows the direction the wavefront
-and by the time the wavefront get back at the starting position,
-the state of each cell on the curve has been cycled through all states.
+When the phase field represents the local state of cardiac tissue,
+we additionally require that $\phi$ is smooth and defined across $C$.
+These conditions constrain the possible values of the phase index:
+moving counterclockwise around $C$ changes $\phi(\bm{x})$ continuously,
+and since $\phi(\bm{x})$ must return to the same state after the closed curve,
+its total change can only be an integer multiple of $2\pi$.
+Consequently, the phase index $I$ itself must be an integer,
+which can be interpreted as the winding number or topological charge of the phase field around $C$.
 
 Another interesting insight can be found when rewriting Equation~\ref{eq:phase-index}.
 Assuming that $\nabla\phi$ is smooth in a region $S$ that is bounded by a curve $C$,
@@ -146,37 +144,34 @@ and thus, the only time that the phase index is different from zero will be when
 $\nabla \phi$ is not smooth or if $\phi$ is undefined in some part of $S$ \autocite{herlin2012reconstruction}.
 This is exactly the case when a rotor is present in $S$,
 since at the rotor tip, the state is undefined.
-We also like to mention that Equation~\ref{eq:phase-index-stokes}
-is used in the kernel implementation of phasemapping found in (CITATION).
+Additionally, we would like to mention that Equation~\ref{eq:phase-index-stokes}
+is used in the kernel implementation of phasemapping found in \textcite{2001theoretical_convolution_method_bray}.
 
-At this point, it should be clear how the phase index can be used to detect rotors,
-but we would like to highlight some subtleties in its interpretation.
+At this point, it should be clear how the phase index can be used to detect rotors.
+Nevertheless, we would like to highlight some subtleties in its interpretation.
 First, the phase index is a property of a closed curve
 and not of a singular point.
 Only when there is one singular point inside that curve,
 a phase index can be assigned to that point.
 Nevertheless, it is perfectly fine to draw a curve around multiple rotor tips
 and calculate the phase index.
-The phase index of this curve $I_C$ would then be equal to the sum of all rotor tips inside that curve.
+The phase index of this curve $I_C$ would then be equal to the sum of all singular points inside that curve.
 
 \begin{equation}
   I_C = \sum_{\bm{x}_i\in C} I(\bm{x}_i)
   \label{eq:index-curve}
 \end{equation}
 
-Next, it should be mentioned that a non-zero phase index does not necessarily represent rotation of the wavefront.
+Second, it should be mentioned that a non-zero phase index does not necessarily represent rotation of the wavefront.
 While it is true that if there is rotational activity,
-we can always find a curve with a non-zero phase index,
-the phase index only indicates that travelling across that curve,
-the phase has shifted with a multiple of the period.
+it is possible to find a curve with a non-zero index,
+the phase index only indicates the phase has shifted with a multiple of the period
+when travelling across that curve.
 To make this statement more concrete,
-we have included a pattern in the simulation that is surrounded by a curve with a non-zero index,
-but does not show any rotation.
+The results include an activation pattern that is surrounded by a curve with a non-zero index,
+but does not show any rotation (See Figure~\ref{fig:zoom-reentry}).
 
-Finally, we want to emphasize that the phase index is only defined if $\phi$ is smooth across $C$.
-This brings us to the main topic of this paper.
-
-\subsubsection{Phase Defects, Scar Tissue and Boundaries}
+\subsubsection{Phase Defects and Non-conductive Structures}
 
 The requirement that $\phi$ is smooth across any curve is not trivial.
 An obvious example is a curve that crosses a rotor tip,
