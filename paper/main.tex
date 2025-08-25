@@ -66,8 +66,8 @@ including limited spatial resolution,
 short cycle lengths,
 fibrosis,
 noise,
-non-conductive tissue,
-and conduction blocks \cite{2017clinical_benchmark_resolution_roney, 2018simulation_benchmark_wavelength_fibrosis_roney, 2024simulation_benchmark_fibrosis_meandering_noise_lootens, 2020clinical_benchmark_pm_methods_li, 2025simulation_benchmark_pm_dgm_hhz_lootens}.
+conduction blocks,
+and non-conductive tissue \cite{2017clinical_benchmark_resolution_roney, 2018simulation_benchmark_wavelength_fibrosis_roney, 2024simulation_benchmark_fibrosis_meandering_noise_lootens, 2020clinical_benchmark_pm_methods_li, 2025simulation_benchmark_pm_dgm_hhz_lootens}.
 In particular, conduction blocks, termed phase defects,
 have been recognized as equally important as phase singularities \cite{tomii2021spatial, 2021experimental_phasedefect_method_arno}.
 Additionally, non-conductive structures play an important part during ablation therapy \cite{duytschaever2024atrial}.
@@ -78,16 +78,16 @@ Together, these features underscore the need to reconsider
 how phasemapping algorithms handle such discontinuities in cardiac tissue.
 
 Our central claim is that phasemapping is conceptually sound,
-but naive implementations fail when confronted with conduction block or non-conductive structures.
-To make this case, we compare two algorithmic approaches:
-a naive approach that assumes global smoothness,
-and an extended approach that explicitly accounts for phase defects and non-conductive structures.
+but naive implementations fail when confronted with discontinuities.
+To demonstrate this, we compare two algorithmic approaches:
+a naive approach that assumes the phase field is smooth,
+and an extended approach that explicitly accounts for conduction block and inexcitable regions.
 
 Both approaches are applied to simulated activation patterns to isolate different arising problems,
 and to an experimental optical mapping recording of ventricular fibrillation in a rat heart.
-Together, these results demonstrate
+Together, these results show
 that improper handling of phase defects and non-conductive structures
-can lead to misleading interpretations of re-entrant activity,
+can lead to misleading interpretations,
 while careful treatment restores the reliability of phasemapping.
 
 \subsection{Background}
