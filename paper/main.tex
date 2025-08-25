@@ -2,11 +2,25 @@
 \usepackage{default}
 
 \addbibresource{references.bib}
+\addbibresource{references_phasemapping.bib}
+\addbibresource{references_impact_arrhythmia.bib}
 \graphicspath{{./figures/}}
 
-\title{Handling Phase Defects and Non-Conductive Tissue}
+\title{An Improved Phase Mapping Implementation using Phase Defects for the Detection of Topologically Charged Boundaries sustaining Cardiac Arrhythmia}
 \author[1]{Bjorn Verstraeten}
-\affil[1]{Ghent University}
+\author[1]{Sebastiaan Lootens}
+\author[1]{Arthur Santos Bezerra}
+\author[1]{Viktor Van Nieuwenhuize}
+\author[1]{Robin Van Den Abeele}
+\author[1]{Sander Hendrickx}
+\author[1]{Arstanbek Okenov}
+\author[1]{Timur Nezlobinskii}
+\author[2]{Balvinder Handa}
+\author[2]{Vineesh Kappadan}
+\author[2]{Fu Siong Ng}
+\author[1]{Nele Vandersickel}
+\affil[1]{Department of Physics and Astronomy, Ghent University, Ghent, Belgium}
+\affil[2]{Imperial College London, London, United Kingdom}
 \date{\today}
 
 \begin{document}
@@ -15,29 +29,13 @@
   \begin{@twocolumnfalse}
     \maketitle
 
-    \begin{center}
-      \resizebox{0.8\textwidth}{!}{\includegraphics{comparison_snapshot_overview.png}}
-      \captionof{figure}{
-        % Snapshot of a simulation with the Fenton-Karma model that
-        % contains discontinuities and holes. An analysis is done with a naive
-        % implementation of phasemapping (left) and with the proposed approach
-        % (right). The values of the mesh correspond the phase field, of which a
-        % value of \(\pi\) corresponds with the excitation wavefront.
-        % Discontinuities, boundaries and rotors are annotated with red if a
-        % counterclockwise rotation is found and in blue for clockwise rotation.
-        % Discontinuities and boundaries that do not show any rotation are
-        % annotated in white.
-      }
-      \label{fig:comparison_snapshot_overview}
-    \end{center}
-
     \begin{abstract}
       \noindent Rotational activity is one of the mechanisms behind
       cardiac arrhythmias,
       and it is therefore important to accurately localize such activity in
       cardiac tissue. A standard method for this, is called phasemapping.
-      While widely used for analysing rotors in cardiac simulations,
-      phasemapping struggles to correctly analyse activation maps with large
+      While widely used for analyzing rotors in cardiac simulations,
+      phasemapping struggles to correctly analyze activation maps with large
       non-conductive regions and/or conductive blocks. To illustrate these, we
       examine a simulation that exhibits these treats, and demonstrate how
       each of them can be addressed.
@@ -49,7 +47,26 @@
 
 \section{Introduction}\label{introduction}
 
-% Doesn't flow, probably need more segue
+Phase mapping is a method introduced in \textcite{1995experimental_rabbit_fibrillation_gray}
+for the detection of rotational electrical activity, so-called functional re-entry,
+in optical maps of experimental rat and sheep data.
+This was done by creating phase maps of the electrical activity and identifying phase singularities,
+points around which the phase changes continuously from 0 to 2$\pi$,
+giving them a non-zero topological charge.
+The first widespread algorithmic implementation was based on convolution operations commonly used in image processing \cite{2001theoretical_convolution_method_bray}.
+Subsequently, an implementation was developed for 2D triangulated meshes \cite{2007simulation_mesh_ring_method_rantner}.
+Since then, numerous papers were published that uses phasemapping for analyzing different datasets
+ranging from simulated functional re-entry \cite{2018simulation_benchmark_wavelength_fibrosis_roney, 2024simulation_benchmark_fibrosis_meandering_noise_lootens}
+to clinical fibrillation \cite{2016clinical_af_fp_vijayakumar, 2016clinical_af_signalprocessing_roney, 2017clinical_af_fp_kuklik, 2017clinical_benchmark_resolution_roney, 2020clinical_benchmark_pm_methods_li}.
+Several problems were apparent when detecting phase singularities attributed to:
+resolution \cite{2017clinical_benchmark_resolution_roney},
+cycle length \cite{2018simulation_benchmark_wavelength_fibrosis_roney},
+fibrosis \cite{2018simulation_benchmark_wavelength_fibrosis_roney, 2024simulation_benchmark_fibrosis_meandering_noise_lootens},
+algorithmic implementation \cite{2024simulation_benchmark_fibrosis_meandering_noise_lootens, 2020clinical_benchmark_pm_methods_li},
+meandering \cite{2024simulation_benchmark_fibrosis_meandering_noise_lootens},
+noise \cite{2024simulation_benchmark_fibrosis_meandering_noise_lootens},
+conduction block \cite{2024simulation_benchmark_fibrosis_meandering_noise_lootens, 2025simulation_benchmark_pm_dgm_hhz_lootens}
+and boundaries \cite{2025simulation_benchmark_pm_dgm_hhz_lootens}.
 
 We present a snapshot of a simple simulation in figure~\ref{fig:comparison_snapshot_overview}.
 By visually inspecting the simulation, a linear rotor appears to turn
