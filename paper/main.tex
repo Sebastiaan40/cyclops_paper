@@ -174,20 +174,21 @@ but does not show any rotation (See Figure~\ref{fig:zoom-reentry}).
 
 \subsubsection{Phase Defects and Non-conductive Structures}
 
-The requirement that $\phi$ is smooth across any curve is not trivial.
+The requirement that $\phi(\bm{x})$ is smooth and defined across a closed curve
+is not trivial.
 An obvious example is a curve that crosses a rotor tip,
-but other patterns that do not involve rotor tips can also be found.
-Like in \textcite{arno2021a, tomii2021spatial},
-which discuss the existence of phase defects,
-otherwise described as discontinuities in the phase field.
-These discontinuities arise when the wavefront hits a region that is still in refractory,
-forming a line where one side is excited and the other still side repolarizing.
-These phases defects form our first problem,
-since it is not possible to find a curve
-that goes only around one point laying on the defect.
-The best we can do is to draw a curve around this defect and calculated its phase index.
+but cardiac tissue can contain other structures where these requirements are not fulfilled.
+As mentioned in \textcite{arno2021a, tomii2021spatial},
+cardiac tissue can exhibit discontinuities in its phase field, termed phase defects.
+Phase defects can arise when the excitation wavefront hits a region
+that is still in refractory,
+forming a line where one side is excited and the other side is still repolarizing.
+These phase defects present our first problem,
+as it is impossible to construct a curve
+that encircles only a single point lying on the defect.
+The best one can do is to draw a curve around this defect and calculate its phase index.
 
-Another example where the $\phi$ is not smooth,
+Another situation where the $\phi$ is not smooth,
 can be found in clinical practice.
 When a patient has an arrhythmia,
 the physician could perform ablation therapy
@@ -195,8 +196,8 @@ and burn  certain regions of the tissue.
 The cells in these patches of scar have an undefined phase.
 While the bulk of these patches don't show interesting behavior,
 the boundary still can.
-However, just like with phase defect,
-the best we can do is draw a curve around the non-conductive tissue
+However, just like with phase defects,
+the best one can do is to draw a curve around the non-conductive tissue
 and calculate its index.
 
 Finally, we should consider the boundaries.
@@ -204,15 +205,40 @@ This can be the outer boundaries of a 2D simulation,
 or, a more clinical example, the mitral valve and pulmonary veins in the left atrium.
 One can see the similarity between a non-conductive patch
 and a hole in the tissue.
-Therefore, boundaries can be treated similar as non-conductive patches.
-This also enables us to capture patterns such as anatomical reentries~\autocite{duytschaever2024atrial}.
-An overview on how to adjust the curves when phase defects and boundaries are present
-is given in Figure~\ref{fig:index_calculation}
-Notice, that the curve around the outer boundary is oriented in clockwise direction.
-This convention has been proposed in \textcite{davidsen2004topological} to make sure
-that the total phase index is conserved for compact surfaces.
+Therefore, boundaries can be treated similar as non-conductive patches,
+which also enables us to capture patterns such as anatomical reentries~\autocite{duytschaever2024atrial}.
 
-\subsubsection{Conservation of Total Phase Index}
+An overview on how to adjust the curves when phase defects and boundaries are present
+is given in Figure~\ref{fig:index_calculation}.
+The first thing that one should notice is
+that the curve around the outer boundary is oriented in clockwise direction.
+This convention has been proposed in \textcite{davidsen2004topological} to make sure
+that the total phase index is conserved for compact surfaces (see Section~\ref{sec:conservation-of-total-phase-index}).
+Secondly, phase defects and non-conductive structures, 
+are all treated in the same manner.
+Therefore, it is only natural to call them all finite cores in case they have a non-zero index.
+This naming refers to the finite circumfrence of the smallest curve one can draw,
+which distinguishes them from singular cores.
+The naming also lays in line with linear cores, which what defects are called in \textcite{arno2021a}
+when they have a non-zero index.
+
+\begin{figure}[ht]
+  \centering
+  \includefig{index_calculation}
+  \caption{Example of a bounded planar domain with holes. The domain
+    contains singular points at \(\pmb{x}_1\), \ldots, \(\pmb{x}_n\) and
+    holes \(H_1\), \ldots{} \(H_{m-1}\), with the outer boundary
+    representing the final hole \(H_m\).
+    Non-conductive patches are shaded in and considered as a hole.
+    Curves are drawn around each singular point and hole
+    with the arrow represent the direction of integration.
+    In addition, a phase defect $D_k$ is presented
+    together with a curve over which to integrate to get the phase index of the defect.
+  }
+  \label{fig:index_calculation}
+\end{figure}
+
+\subsubsection{Conservation of Total Phase Index}\label{sec:conservation-of-total-phase-index}
 
 Let us first start of by looking at a closed surface $S$, meaning no boundaries,
 and a phase field that is smooth except in a finite number of singular points $\bm{x}_i$.
@@ -241,22 +267,6 @@ resulting in the following equation:
 \(H_j\) the holes,
 and \(D_k\) the phase defects.
 From now on we will refer to Equation~\ref{eq:index-theorem-extended} as the index theorem.
-
-\begin{figure}[ht]
-  \centering
-  \includefig{index_calculation}
-  \caption{Example of a bounded planar domain with holes. The domain
-    contains singular points at \(\pmb{x}_1\), \ldots, \(\pmb{x}_n\) and
-    holes \(H_1\), \ldots{} \(H_{m-1}\), with the outer boundary
-    representing the final hole \(H_m\).
-    Non-conductive patches are shaded in and considered as a hole.
-    Curves are drawn around each singular point and hole
-    with the arrow represent the direction of integration.
-    In addition, a phase defect $D_k$ is presented
-    together with a curve over which to integrate to get the phase index of the defect.
-  }
-  \label{fig:index_calculation}
-\end{figure}
 
 \vspace{2em}
 
