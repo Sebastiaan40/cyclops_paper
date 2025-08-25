@@ -47,49 +47,48 @@
 
 \section{Introduction}
 
-Phase mapping is a method introduced in \textcite{1995experimental_rabbit_fibrillation_gray}
-for the detection of rotational electrical activity, so-called functional re-entry,
-in optical maps of experimental rat and sheep data.
-This was done by creating phase maps of the electrical activity and identifying phase singularities,
-points around which the phase changes continuously from 0 to 2$\pi$,
-giving them a non-zero phase index.
-The first widespread algorithmic implementation was based on convolution operations commonly used in image processing \cite{2001theoretical_convolution_method_bray}.
-Subsequently, an implementation was developed for 2D triangulated meshes \cite{2007simulation_mesh_ring_method_rantner}.
+Atrial fibrillation, the most common cardiac arrhythmia and a major contributor to cardiovascular mortality,
+remains difficult to treat effectively due to patient-specific mechanisms,
+with rotational electrical activity identified as a key driver \cite{worldbankWorldBank, Brundel2022, 1994theoretical_hypothesis_scrollwaves_fibrillation_winfree}.
+Detecting and characterizing such activity has therefore been a central goal in both experimental and clinical electrophysiology.
+
+% I believe it was done for rabbit hearts
+In order to detect rotational activity in optical maps of a rabbit heart,
+phasemapping was introduced \cite{1995experimental_rabbit_fibrillation_gray}.
 Since then, numerous papers were published that uses phasemapping for analyzing different datasets
 ranging from simulated functional re-entry \cite{2018simulation_benchmark_wavelength_fibrosis_roney, 2024simulation_benchmark_fibrosis_meandering_noise_lootens}
-to clinical fibrillation \cite{2016clinical_af_fp_vijayakumar, 2016clinical_af_signalprocessing_roney, 2017clinical_af_fp_kuklik, 2017clinical_benchmark_resolution_roney, 2020clinical_benchmark_pm_methods_li}.
-Several problems were apparent when detecting phase singularities attributed to:
-resolution, cycle length, fibrosis, algorithmic implementation, meandering, noise, conduction block, and boundaries. \cite{2017clinical_benchmark_resolution_roney, 2018simulation_benchmark_wavelength_fibrosis_roney, 2024simulation_benchmark_fibrosis_meandering_noise_lootens, 2020clinical_benchmark_pm_methods_li, 2025simulation_benchmark_pm_dgm_hhz_lootens}
+These studies have demonstrated both the promise of phasemapping
+and its limitations when confronted with realistic data.
 
-Recent developments have recognized slow conduction zones,
-modelled by phase defects,
-as being equally important as phase singularities \cite{tomii2021spatial, 2021experimental_phasedefect_method_arno}.
-Furthermore, we recently implemented a new method called DGM-TOP based
-on the ideas of PM for the detection of anatomical re-entry in clinical atrial tachycardia \cite{2025clinical_anatomical_hole_pm_vandenabeele}.
-% In this paper we claim that problems of PM arise
-% due to an incorrect understanding of rotational activity in cardiac fibrillation.
-% Specifically, we claim that the concept of phase singularity is incomplete,
-% as there is always a finite surface around which electrical activity rotates.
+The identification of phase singularities can be distorted by multiple factors,
+including limited spatial resolution,
+% Is it a short cycle lenght or something else?
+short cycle lengths,
+fibrosis,
+noise,
+non-conductive tissue,
+and conduction blocks \cite{2017clinical_benchmark_resolution_roney, 2018simulation_benchmark_wavelength_fibrosis_roney, 2024simulation_benchmark_fibrosis_meandering_noise_lootens, 2020clinical_benchmark_pm_methods_li, 2025simulation_benchmark_pm_dgm_hhz_lootens}.
+In particular, conduction blocks, termed phase defects,
+have been recognized as equally important as phase singularities \cite{tomii2021spatial, 2021experimental_phasedefect_method_arno}.
+Additionally, non-conductive structures play an important part during ablation therapy \cite{duytschaever2024atrial}.
+Likewise, non-conductive structures play a critical role,
+% Maybe some other citations could be placed here?
+especially in the context of ablation therapy \cite{duytschaever2024atrial}.
+Together, these features underscore the need to reconsider
+how phasemapping algorithms handle such discontinuities in cardiac tissue.
 
-While a naive implementation of phasemapping would detect rotors
-reasonably well,
-it struggles to analyze simulations with non-conductive regions or
-conductive blocks,
-such as the simulation pictured above.
-This is not because the idea behind phasemapping is lacking.
-Rather, it's because a naive approach mistreats such simulations.
+Our central claim is that phasemapping is conceptually sound,
+but naive implementations fail when confronted with conduction block or non-conductive structures.
+To make this case, we compare two algorithmic approaches:
+a naive approach that assumes global smoothness,
+and an extended approach that explicitly accounts for phase defects and non-conductive structures.
 
-By combining the ideas from PM, phase defects and DGM-TOP, we realize that the PM implementation by Bray et al. is mathematically incorrect.
-The method sums the phase gradient along infinitesimal loops which potentially go through regions of conduction block or scar tissue, which translates to the mathematical error of integrating through a phase discontinuity.
-
-To tackle this fundamental problem, we propose a novel method which replaces phase singularities with topologically charged boundaries.
-These boundaries are two-dimensional surface structures with non-zero phase index and can be classified into four types.
-Within this method, we generalize re-entry to activation patterns, also categorized into four types, defined by both the phase index and the number of adjacent wavefronts.
-We claim that our method applies not only to functional re-entry in fibrillation, but also to anatomical re-entry in tachycardia, yielding a more generalized approach to re-entry detection.
-We propose an implementation of this method we call Extended Phase Mapping (EPM) which is based on cutting phase defects out of the surface mesh, extracting surface boundaries, and calculating their charge.
-We apply EPM to eight simple simulations: four illustrating the boundary types and four illustrating the activation patterns, generated with our open-source finite-difference Python package Finitewave CITATION.
-Finally, we apply EPM to an experimental optical mapping recording of ventricular fibrillation in a rat heart.
-
+Both approaches are applied to simulated activation patterns to isolate different arising problems,
+and to an experimental optical mapping recording of ventricular fibrillation in a rat heart.
+Together, these results demonstrate
+that improper handling of phase defects and non-conductive structures
+can lead to misleading interpretations of re-entrant activity,
+while careful treatment restores the reliability of phasemapping.
 
 \subsection{Background}
 
