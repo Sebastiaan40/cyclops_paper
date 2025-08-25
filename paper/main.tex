@@ -172,55 +172,47 @@ To make this statement more concrete,
 The results include an activation pattern that is surrounded by a curve with a non-zero index,
 but does not show any rotation (See Figure~\ref{fig:zoom-reentry}).
 
-\subsubsection{Phase Defects and Non-conductive Structures}
+\subsubsection{Phase Defects, Non-conductive Structures and Boundaries}
 
-The requirement that $\phi(\bm{x})$ is smooth and defined across a closed curve
-is not trivial.
+For the phase index to be well-defined,
+it is required that $\phi(\bm{x})$ is smooth across the closed curve,
+but this condition is not always satisfied in cardiac tissue.
 An obvious example is a curve that crosses a rotor tip,
-but cardiac tissue can contain other structures where these requirements are not fulfilled.
-As mentioned in \textcite{arno2021a, tomii2021spatial},
-cardiac tissue can exhibit discontinuities in its phase field, termed phase defects.
-Phase defects can arise when the excitation wavefront hits a region
+but cardiac tissue can contain other structures
+where these requirements are not fulfilled.
+
+First \textcite{arno2021a, tomii2021spatial} mentioned
+that cardiac tissue can exhibit discontinuities or defects in its phase field.
+Such phase defects can arise when the excitation wavefront hits a region
 that is still in refractory,
 forming a line where one side is excited and the other side is still repolarizing.
 These phase defects present our first problem,
 as it is impossible to construct a curve
 that encircles only a single point lying on the defect.
-The best one can do is to draw a curve around this defect and calculate its phase index.
-
 Another situation where the $\phi$ is not smooth,
 can be found in clinical practice.
 When a patient has an arrhythmia,
-the physician could perform ablation therapy
-and burn  certain regions of the tissue.
-The cells in these patches of scar have an undefined phase.
-While the bulk of these patches don't show interesting behavior,
-the boundary still can.
-However, just like with phase defects,
-the best one can do is to draw a curve around the non-conductive tissue
-and calculate its index.
-
+the physician could perform ablation therapy and burn certain regions of the tissue.
+The cells in these patches of scar have an undefined phase, and thus,
+it is also not possible to define a phase index of the points
+lying inside or at boundary of these non-conductive regions.
 Finally, we should consider the boundaries.
 This can be the outer boundaries of a 2D simulation,
 or, a more clinical example, the mitral valve and pulmonary veins in the left atrium.
-One can see the similarity between a non-conductive patch
-and a hole in the tissue.
+One can see the similarity between a non-conductive patch and a hole in the tissue.
 Therefore, boundaries can be treated similar as non-conductive patches,
 which also enables us to capture patterns such as anatomical reentries~\autocite{duytschaever2024atrial}.
 
-An overview on how to adjust the curves when phase defects and boundaries are present
-is given in Figure~\ref{fig:index_calculation}.
-The first thing that one should notice is
-that the curve around the outer boundary is oriented in clockwise direction.
-This convention has been proposed in \textcite{davidsen2004topological} to make sure
-that the total phase index is conserved for compact surfaces (see Section~\ref{sec:conservation-of-total-phase-index}).
-Secondly, phase defects and non-conductive structures, 
-are all treated in the same manner.
-Therefore, it is only natural to call them all finite cores in case they have a non-zero index.
-This naming refers to the finite circumfrence of the smallest curve one can draw,
-which distinguishes them from singular cores.
-The naming also lays in line with linear cores, which what defects are called in \textcite{arno2021a}
-when they have a non-zero index.
+In each case, the smallest admissible curve encloses the whole structure
+rather than a single point.
+Figure~\ref{fig:index_calculation} illustrates this construction,
+including the clockwise orientation of the outer boundary curve,
+following the convention introduced in \textcite{davidsen2004topological}.
+Because phase defects, non-conductive patches, and boundaries are all treated
+in the same way, we introduce the unifying term \emph{finite core} for any
+structure with a non-zero index that is enclosed by a curve of finite
+circumference. This terminology distinguishes them from \emph{singular cores}, or rotors,
+and generalizes the concept of \emph{linear cores} introduced in \textcite{arno2021a}.
 
 \begin{figure}[ht]
   \centering
@@ -238,7 +230,7 @@ when they have a non-zero index.
   \label{fig:index_calculation}
 \end{figure}
 
-\subsubsection{Conservation of Total Phase Index}\label{sec:conservation-of-total-phase-index}
+\subsubsection{Conservation of Total Phase Index}
 
 Let us first start of by looking at a closed surface $S$, meaning no boundaries,
 and a phase field that is smooth except in a finite number of singular points $\bm{x}_i$.
