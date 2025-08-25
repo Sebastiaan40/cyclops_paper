@@ -234,10 +234,12 @@ and generalizes the concept of \emph{linear cores} introduced in \textcite{arno2
 
 Let us first start of by looking at a closed surface $S$, meaning no boundaries,
 and a phase field that is smooth except in a finite number of singular points $\bm{x}_i$.
-If we now draw a curve on that surface with nothing in it,
+When drawing a curve on the surface,
+that encloses or intersects no singular points,
 its phase index will be zero as implied by Equation~\ref{eq:phase-index-stokes}.
-Since \(S\) is a closed surface, this curve also encircles everything,
-and since Equation~\ref{eq:index-curve} still applies,
+Since \(S\) is a closed surface, this curve also encircles all singular points,
+As the index is uniquely defined for each curve,
+and Equation~\ref{eq:index-curve} still applies,
 we can write
 
 \begin{equation}
@@ -247,8 +249,8 @@ we can write
 
 \noindent This is the same as stating that the sum of all phase indices is
 conserved on a closed surface.
-This conservation law can be extended to compact surfaces \autocite{herlin2012reconstruction, davidsen2004topological},
-resulting in the following equation:
+This conservation law can be extended to compact surfaces, like the one in Figure~\ref{fig:index_calculation},
+resulting in the following equation \autocite{herlin2012reconstruction, davidsen2004topological}:
 
 \begin{equation}
   \sum_{x_i \in S} I(x_i) + \sum_{H_j \in S} I(H_j) + \sum_{D_k \in S} I(D_k)  = 0
@@ -259,16 +261,6 @@ resulting in the following equation:
 \(H_j\) the holes,
 and \(D_k\) the phase defects.
 From now on we will refer to Equation~\ref{eq:index-theorem-extended} as the index theorem.
-
-\vspace{2em}
-
-\noindent Like stated above, the main topic of this paper is about the importance
-of handling obstacles and boundaries in cardiac tissue.
-The index theorem can be useful for assessing the quality of an analysis,
-but it does not give a conclusive answer.
-Therefore, in this paper we will try to present a simulation
-that contains all pitfalls which are discussed above,
-while still being simple enough to visually confirm the correct analysis.
 
 \section{Methods}
 
