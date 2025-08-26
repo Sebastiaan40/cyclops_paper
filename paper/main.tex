@@ -180,7 +180,7 @@ but problems can also arise from other structures in the tissue.
 
 First, \textcite{arno2021a} showed
 that conduction blocks in cardiac tissue manifest
-as discontinuities or defects in the phase field 
+as discontinuities or defects in the phase field
 that is constructed from of the tissue.
 Conduction block occur when an excitation wavefront encounters tissue that is still refractory.
 At such sites, one side of the interface is excited while the other is repolarizing,
@@ -254,67 +254,60 @@ From now on we will refer to Equation~\ref{eq:index-theorem-extended} as the ind
 
 \section{Methods}
 
-First, we describe our four categories of boundaries: (1) scar boundaries, (2) surface boundaries, (3) functional boundaries and (4) hybrid boundaries and four activation pattern types: (1) simple uncharged (2) complex uncharged (3) simple charged (4) complex charged.
-Second, we describe the naive implementation of PM and its problems. Third, we introduce our improved implementation of PM that correctly handles boundaries. Fourth, we describe the simulation protocol of the eight simulations. Finally, we present the experimental optical mapping recording of ventricular fibrillation in a rat heart.
-\subsection{Definitions: types of boundaries and activation patterns}
-
-% - phase index integral definition and equivalent practical definition using phasejumps
-% - Intuition behind idea shift: from phase singularities to boundaries (Stokes theorem)
-% - Boundary types: scar, surface, functional, hybrid
-% - Topologically uncharged activation patterns: simple (2 wavefronts), complex (4, 6, 8, ... wavefronts)
-% - Topologically charged activation patterns: simple (1 wavefront), complex (2, 3, 4, ... wavefronts)
-
-There exists a numerous amount methods to detect rotational activity \autocite{pikunov2023the, gurevich2019robust, li2020standardizing},
+There exists a numerous amount of methods to detect rotational activity \autocite{pikunov2023the, gurevich2019robust, li2020standardizing},
 making it is near impossible to create a comparative study or full review.
 Therefore, we opted to give a demonstration of the effect
-that boundaries and phase defect can have on the analysis.
+that phase barriers can have on the analysis.
 This effect becomes most visible by comparing two approaches.
 Both approaches will use a straightforward implementation of phasemapping, but
 they will differ in the assumption that where made about the cardiac tissue.
 In the first approach, it is naively assumed
 that the phase is smooth across the complete tissue.
-In the second approach, we account for possible obstacles and boundaries,
+In the second approach, we account for possible phase barriers,
 and perform a phasemapping analysis afterward.
+This second implementation is basically an extension of the first one,
+so we will refer to it as extended phasemapping.
+Both approaches are applied to simulated activation patterns
+to isolate different arising problems,
+and to an experimental optical mapping recording of ventricular fibrillation in a rat heart.
 
-\subsection{Setup of the Simulation}
+\subsection{Setup of the Simulations}
 
-As it is not required to have realistic geometries to induce phase
-defects, We chose to create a simulation on a homogeneous 2D grid. This
-also has the benefit to get a full overview of the simulation at once
+As it is not required to have realistic geometries to induce phase barriers,
+we chose to create simulations on a homogeneous 2D grid.
+This also has the benefit to get a full overview of the simulation at once
 and easily place snapshots in the paper.
-The simulation is created using Finitewave
-(\url{https://github.com/finitewave/Finitewave}), an open-source Python
-package for a wide range of tasks in modelling cardiac electrophysiology
-using finite-difference methods. The main argument for using Finitewave
-is its clear and transparent implementation of the models which allows
-us to verify its correctness. Furthermore, the intuitive interface and
-lots of examples make it easy to create, evaluate, and adjust
-simulations.
+The simulation is created using Finitewave (\url{https://github.com/finitewave/Finitewave}),
+an open-source Python package for a wide range of tasks
+in modelling cardiac electrophysiology using finite-difference methods.
+The main argument for using Finitewave is its clear and transparent implementation
+of the models which allows us to verify its correctness.
+Furthermore, the intuitive interface and
+lots of examples make it easy to create,
+evaluate, and adjust simulations.
 
-The cell model used for the simulation is the Fenton-Karma model. Since
-the research question of this paper does not involve the effect of ionic
-channels on the dynamics, it is more fitting to use a phenomenological
-model which is less computationally heavy and has simpler cell dynamics.
-We choose the Fenton-Karma model specifically since it was the easiest
-to create phase defects without tweaking the model's parameters.
+The cell model used for the simulation is the Fenton-Karma model.
+Since the research question of this paper
+does not involve the effect of ionic channels on the dynamics,
+it is more fitting to use a phenomenological model
+which is less computationally heavy and has simpler cell dynamics.
+We choose the Fenton-Karma model specifically,
+since it was the easiest to create phase defects.
 
-The 2D mesh is first pre-paced with 10 planar stimuli and an interval of
-200 time steps between them. Next, a boundary is added inside the mesh
-and a second square stimulus is applied to induce rotational activity.
-To ensure that the rotor fits on the mesh, but without increasing
-computational time, we lowered the conductivity of the mesh. Finally, we
-added a phase defect using a third stimulus in a small region just
-before it goes out of refractory.
+All simulation are created starting from a 2D mesh
+that is pre-paced with 10 planar stimuli
+and an interval of 200 time steps between them.
+To ensure that the rotor fits on the mesh,
+but without increasing computational time,
+we lowered the diffusion coefficient.
 
-\subsection{Implementation of phasemapping}
+\subsubsection{Complete and Near-Complete Rotation}
 
-To highlight the influence of phase defects and boundaries, we will
-compare two implementations of phasemapping: one where the simulation is
-scanned for singularities without addressing phase defects and ignoring
-boundaries, which we will refer to as naive phasemapping, and another
-were we take into account phase defects and boundaries. This second
-implementation is basically an extension of the first one, so we will
-refer to it as extended phasemapping.
+\subsubsection{Parallel Activity around a Phase Defect}
+
+\subsubsection{Rotational Activity in Tissue with Diffuse Fibrosis}
+
+\subsection{Optical Mapping of Ventricular Fibrillation}
 
 \subsection{Naive implementation of Phasemapping}
 % - Orientation of mesh elements (implicitly done in vtk)
