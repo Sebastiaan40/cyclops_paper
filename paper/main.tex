@@ -68,11 +68,9 @@ meandering \cite{2024simulation_benchmark_fibrosis_meandering_noise_lootens},
 noise \cite{2024simulation_benchmark_fibrosis_meandering_noise_lootens},
 limited spatial resolution \cite{2017clinical_benchmark_resolution_roney},
 conduction blocks \cite{2025simulation_benchmark_pm_dgm_hhz_lootens},
-and non-conductive tissue \cite{2025simulation_benchmark_pm_dgm_hhz_lootens}.
-In particular, conduction blocks, termed phase defects,
-have been recognized as equally important as phase singularities \cite{tomii2021spatial, 2021experimental_phasedefect_method_arno}.
-Additionally, non-conductive structures play an important part during ablation therapy \cite{duytschaever2024atrial}.
-Likewise, non-conductive structures play a critical role,
+and boundaries \cite{2025simulation_benchmark_pm_dgm_hhz_lootens}.
+In particular, conduction blocks have been recognized as equally important as phase singularities \cite{tomii2021spatial, 2021experimental_phasedefect_method_arno}.
+Likewise, boundaries, such as pulmonary veins or the mitral valve, play a critical role,
 % Maybe some other citations could be placed here?
 especially in the context of ablation therapy \cite{duytschaever2024atrial}.
 Together, these features underscore the need to reconsider
@@ -82,12 +80,12 @@ Our central claim is that phasemapping is conceptually sound,
 but naive implementations fail when confronted with discontinuities.
 To demonstrate this, we compare two algorithmic approaches:
 a naive approach that assumes the phase field is smooth,
-and an extended approach that explicitly accounts for conduction block and inexcitable regions.
+and an extended approach that explicitly accounts for conduction block and boundaries.
 
 Both approaches are applied to simulated activation patterns to isolate different arising problems,
 and to an experimental optical mapping recording of ventricular fibrillation in a rat heart.
 Together, these results show
-that improper handling of phase defects and non-conductive structures
+that improper handling of conduction blocks and boundaries
 can lead to misleading interpretations,
 while careful treatment restores the reliability of phasemapping.
 
@@ -172,47 +170,39 @@ To make this statement more concrete,
 The results include an activation pattern that is surrounded by a curve with a non-zero index,
 but does not show any rotation (See Figure~\ref{fig:zoom-reentry}).
 
-\subsubsection{Phase Defects, Non-conductive Structures and Boundaries}
+\subsubsection{Phase Barriers}
 
 For the phase index to be well-defined,
-it is required that $\phi(\bm{x})$ is smooth across the closed curve,
-but this condition is not always satisfied in cardiac tissue.
-An obvious example is a curve that crosses a rotor tip,
-but cardiac tissue can contain other structures
-where these requirements are not fulfilled.
+it is required that $\phi(\bm{x})$ is smooth across the closed curve.
+In cardiac tissue, however, this condition is not always satisfied.
+A familiar example is a curve that intersects with a rotor tip,
+but problems can also arise from other structures in the tissue.
 
-First \textcite{arno2021a, tomii2021spatial} mentioned
-that cardiac tissue can exhibit discontinuities or defects in its phase field.
-Such phase defects can arise when the excitation wavefront hits a region
-that is still in refractory,
-forming a line where one side is excited and the other side is still repolarizing.
-These phase defects present our first problem,
+First, \textcite{arno2021a} showed
+that conduction blocks in cardiac tissue manifest
+as discontinuities or defects in the phase field 
+that is constructed from of the tissue.
+Conduction block occur when an excitation wavefront encounters tissue that is still refractory.
+At such sites, one side of the interface is excited while the other is repolarizing,
+forming a line of discontinuity in the phase field.
+In addition, conduction blocks can be caused by the non-conductive structures in the cardiac tissue,
+such as diffuse fibrosis or dense scar tissue that is created during ablation therapy.
+Phase defects present our first problem,
 as it is impossible to construct a curve
 that encircles only a single point lying on the defect.
-Another situation where the $\phi$ is not smooth,
-can be found in clinical practice.
-When a patient has an arrhythmia,
-the physician could perform ablation therapy and burn certain regions of the tissue.
-The cells in these patches of scar have an undefined phase, and thus,
-it is also not possible to define a phase index of the points
-lying inside or at boundary of these non-conductive regions.
-Finally, we should consider the boundaries.
-This can be the outer boundaries of a 2D simulation,
-or, a more clinical example, the mitral valve and pulmonary veins in the left atrium.
-One can see the similarity between a non-conductive patch and a hole in the tissue.
-Therefore, boundaries can be treated similar as non-conductive patches,
-which also enables us to capture patterns such as anatomical reentries~\autocite{duytschaever2024atrial}.
+Secondly, cardiac tissue can also contain anatomical or geometric boundaries,
+such as the edges of a 2D simulation,
+or structures like the mitral valve and pulmonary veins when looking at the endocardium of the left atrium.
+Boundaries form a similar problem as phase defects,
+as a single boundary point cannot be encircled by a curve.
 
-In each case, the smallest admissible curve encloses the whole structure
+For both phase defects and boundaries,
+the smallest admissible closed curve must enclose the entire region
 rather than a single point.
-Figure~\ref{fig:index_calculation} illustrates this construction,
-including the clockwise orientation of the outer boundary curve,
-following the convention introduced in \textcite{davidsen2004topological}.
-Because phase defects, non-conductive patches, and boundaries are all treated
-in the same way, we introduce the unifying term \emph{finite core} for any
-structure with a non-zero index that is enclosed by a curve of finite
-circumference. This terminology distinguishes them from \emph{singular cores}, or rotors,
-and generalizes the concept of \emph{linear cores} introduced in \textcite{arno2021a}.
+Therefore, it is natural to unify them under the term \emph{phase barriers}.
+The construction of all curves is illustrated in Fig.~\ref{fig:index_calculation},
+where the clockwise orientation of the outer boundary curve
+follows the convention introduced in \textcite{davidsen2004topological}.
 
 \begin{figure}[ht]
   \centering
