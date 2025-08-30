@@ -168,7 +168,7 @@ the phase index only indicates the phase has shifted with a multiple of the peri
 when travelling across that curve.
 To make this statement more concrete,
 The results include an activation pattern that is surrounded by a curve with a non-zero index,
-but does not show any rotation (See Figure~\ref{fig:zoom-reentry}).
+but does not show any rotation (See Figure~\ref{fig:near_complete_rotation}).
 
 \subsubsection{Phase Barriers}
 
@@ -293,13 +293,14 @@ it is more fitting to use a phenomenological model
 which is less computationally heavy and has simpler cell dynamics.
 We choose the Fenton-Karma model specifically,
 since it was the easiest to create phase defects.
-
 All simulation are created starting from a 2D mesh
 that is pre-paced with 10 planar stimuli
 and an interval of 200 time steps between them.
 To ensure that the rotor fits on the mesh,
 but without increasing computational time,
 we lowered the diffusion coefficient.
+
+For each simulation the normalized action potential is tracked
 
 \subsubsection{Complete and Near-Complete Rotation}
 
@@ -313,10 +314,10 @@ we lowered the diffusion coefficient.
 % - Orientation of mesh elements (implicitly done in vtk)
 % - Detection of phase singularities using practical definition for mesh elements
 
-The first step was to convert the action potential to a phase field.
-This was done using taking the angle Hilbert transform of the action
-potential as suggested by \autocite{bray2002considerations}. Additionally,
-we made sure that the peak of the action potential corresponds to
+The first step is to convert the action potential to a phase field.
+This is done by using the Hilbert transform of the action potential
+as suggested by \autocite{bray2002considerations}.
+Additionally, the peak of the action potential corresponds to
 \(\pi\) (see Figure~\ref{fig:action_potential_and_phase}),
 so that it becomes straightforward to compare the phase field with
 the action potential.
@@ -331,13 +332,10 @@ the action potential.
   }\label{fig:action_potential_and_phase}
 \end{figure}
 
-Next, we will create a triangulated mesh and compute the phase index for
-each triangle at each time step. In theory, the cells of the mesh could
-be any polygon, but triangulated meshes are quite common and choosing
-so, made the code simpler.
-
-For any polygon, the phase index can be calculated by counting the
-number of phase jumps. An algorithm for this will look like:
+Next, the mesh is tessellated
+and compute the phase index for each at each time step.
+For any cell, the phase index can be calculated by counting the number of phase jumps.
+An algorithm for this will look like:
 
 \begin{enumerate}
     \def\labelenumi{\arabic{enumi}.}
@@ -355,7 +353,7 @@ number of phase jumps. An algorithm for this will look like:
     of positive and negative phase jumps respectively.
 \end{enumerate}
 
-\subsection{Improved implementation of PM correctly handling boundaries}
+\subsection{Extended implementation of Phasemapping}
 % - Localization of boundaries: scar and functional (model as phase defect, detect using phase difference threshold), surface (vtk methods) + hybrid
 % - Orientation of boundaries (implicitly done in vtk)
 % - Detection of charged boundaries using practical definition for boundaries
@@ -380,89 +378,17 @@ Finally, the boundaries and holes are extracted as polygons. The naive
 phasemapping approach (see previous section) is then applied to these
 polygons together with the remaining cells.
 
-\subsection{Comparison of both methods}
-% - Scar boundaries: experimentally induced ischemia
-% - Surface boundaries: 2D image boundary
-% - Functional boundaries: fibrillation causes many front-tail interactions
-% - Hybrid boundaries: scar + functional, surface + functional + scar
-% - Uncharged patterns: functional block + surface boundary + anatomical scar
-% - Charged patterns: functional + surface + hybrid boundaries
-% - Noise: possible LAT annotations of ischemic cells
-
 \section{Results}
 
-\subsection{Basic simulations}
+\subsection{Simulations}
 
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=\columnwidth]{zoom_rotor.png}
-  \caption{Zoom of the bottom left of the simulation, showcasing a
-    counterclockwise rotation. Left: A snapshot at time step 172, with the
-    colors represent the phase of the points at that time step. Rotors and
-    critical cycles are annotated in red. Right: The phase density map taken
-    across the entire time of the simulation. The colors represent the
-    number of time steps that a point was annotated. A log scale was used to
-    enhance visibility. The results of the naive approach are displayed at
-  the top, and the results of the extended approach the bottom.}
-  \label{fig:zoom-rotor}
-\end{figure}
+\subsubsection{Complete and Near-Complete Rotation}
 
-First, let's focus on the bottom left (see Figure~\ref{fig:zoom-rotor}).
-Both approaches identify rotational activity in this region, and by
-comparing both point density maps, it is clear that they also recognize
-a similar drift. However, the extended approach detects a phase defect
-at the center of the rotational activity, indicating that this is a
-linear rotor, while this information is not present in the analysis of
-the naive approach.
+\subsubsection{Parallel Activity around a Phase Defect}
 
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=\columnwidth]{zoom_defect.png}
-  \caption{Zoom of the bottom right of the simulation, showcasing a phase
-    defect without rotation. From left to right, snapshots are taken at time
-    steps 157, 177 and 235. The colors represent the phase of the points at
-    that time step. (Counter)clockwise rotation is annotated in red (blue)
-    and phase defect without rotation is annotated in white. The results of
-    the naive approach are displayed at the top, and the results of the
-  extended approach the bottom.}
-  \label{fig:zoom-defect}
-\end{figure}
+\subsubsection{Rotational Activity in Tissue with Diffuse Fibrosis}
 
-Next, we shift focus to the bottom right (see
-Figure~\ref{fig:zoom-defect}). Looking at the snapshots of the simulation,
-the naive approach highlight two rotors in opposite direction, which
-collide with each other before making a complete turn. In contrast, the
-extended approach does not identify rotors in this region. Instead, it
-finds a phase defect that is located between the two rotors. What
-happened here is that the extended approach calculated the phase index
-of both rotors together, and since these are of opposite sign, they
-cancel each other out.
-
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=\columnwidth]{zoom_reentry.png}
-  \caption{Zoom of the top of the simulation, showcasing rotation around a
-    non-conductive region. Only the results of the extended approach are
-    shown, since the naive approach did not detect anything. From left to
-    right and top to bottom, snapshots are taken at time steps 132, 172 and
-    198. The colors represent the phase of the points at that time step and
-  critical cycles with clockwise rotation are annotated in blue.}
-  \label{fig:zoom-reentry}
-\end{figure}
-
-Finally, we look at the top of the simulation (see
-Figure~\ref{fig:zoom-reentry}). We now have the opposite situation as
-before at the bottom right: The extended approach finds rotational
-activity around the non-conductive tissue while the naive approach does
-not. A closer observation of the different snapshots reveals an
-interesting pattern: The number of wave fronts around the non-conductive
-tissue alternates between one and three. But what makes is even more
-peculiar is that none of the wavefronts makes a complete turn. This
-reminds us about the pattern seen in the bottom right where two rotors
-collide with each other before completing a turn. Yet, this time the
-total phase index is non-zero.
-
-\subsection{Case study: optical mapping of experimental rat VF}
+\subsection{Optical Mapping of Ventricular Fibrillation}
 
 \begin{figure}[ht]
   \centering
@@ -477,16 +403,6 @@ total phase index is non-zero.
 % - Naive approach violates the index theorem when scar or surface boundaries are present
 % - Naive approach dismisses PS that do not make a full rotation which neglects complex charged activation patterns
 % - For uncharged functional boundaries: no PS present in extended phase mapping, PS detected by naive approach integrate through phase defects (cite threshold values in Li)
-
-The presented simulation is nothing out of the ordinary.
-It has only three main components:
-a linear core, rotation around a non-conductive region and a phase defect.
-That is it. No anisotropic conductivity, no fibers and no noise.
-The simulation is also of a good resolution, which also favors phasemapping.
-Yet, the result of the naive approach is quite different
-from that of the extended approach.
-We argue that the result of the extended approach is more favorable
-as it aligns better with our visual inspection.
 
 Additionally, the result of the naive approach does not fulfil the index theorem (Eq.~\ref{eq:index-theorem-extended}),
 implying that the analysis is incorrect.
@@ -538,8 +454,6 @@ at any value between $\pi$ and $2\pi$.
 % - Restriction of functional and scar boundary detection using only 1 feature: phase difference. Future research should improve detection of functional and scar boundaries
 % - Restriction of method to 2D meshes. Preliminary research shows applicability for 3D VT simulation meshes by taking 2D slices.
 % - For the simplicity of the paper, signal smoothing, downsampling and noise effects were not extensively investigated. Future research should aim to test the robustness of charged boundary detection on these parameters
-
-\subsection{Conclusion}
 
 To conclude this article,
 we acknowledge that the described approaches is probably too simplistic

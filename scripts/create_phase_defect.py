@@ -28,6 +28,7 @@ v_tracker.dir_name = "data/phase_defect/v"
 v_tracker.step = 20
 v_tracker.overwrite = True
 tracker_sequence.add_tracker(v_tracker)
+
 # create model object and set up parameters:
 fenton_karma = fw.FentonKarma2D()
 fenton_karma.dt = 0.01
@@ -43,7 +44,6 @@ fenton_karma.tracker_sequence = tracker_sequence
 # run the model:
 # adjust the number of threads if needed
 fenton_karma.run(num_of_theads=15)
-
 
 # calculate phase:
 output_dir = Path("data/phase_defect/phase")
