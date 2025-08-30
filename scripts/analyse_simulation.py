@@ -9,7 +9,7 @@ import pandas as pd
 import pyvista as pv
 from cyclops.extended_phasemapping import ExtendedPhaseMapping
 
-data_dir = Path("data/near_complete_rotation")
+data_dir = Path("data/phase_defect")
 
 u_path = data_dir / "u"
 phase_path = data_dir / "phase"
@@ -19,7 +19,7 @@ list_of_phases = []
 list_of_action_potentials = []
 
 step = 4
-start = 2800
+start = 0
 stop = len(list(u_path.glob("*.npy")))
 for i in range(start, stop, step):
     list_of_action_potentials.append(np.load(u_path / f"{i}.npy").ravel())
@@ -49,6 +49,7 @@ epm.run()
 
 # visualise results
 slider = vt.Slider(epm)
+slider.visible_objects = ["phasefield", "critical_cycles", "noncritical_cycles"]
 slider.show()
 
 # Create phase density map
