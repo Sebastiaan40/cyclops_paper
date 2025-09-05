@@ -5,3 +5,6 @@ figures/
 output/
 aux/
 indent.log
+pickle
+__pycache__
+

@@ -4,12 +4,14 @@ import numpy as np
 
 # number of nodes on the side
 n = 400
+# n = 20
 tissue = fw.CardiacTissue2D([n, n])
 
 # set up stimulation parameters:
 stim_sequence = fw.StimSequence()
 
 num_of_beats = 10
+# num_of_beats = 3
 interval = 200
 for i in range(num_of_beats):
     stim_sequence.add_stim(fw.StimVoltageCoord2D(i * interval, 1, 0, -1, 0, 5))
@@ -27,7 +29,7 @@ tracker_sequence.add_tracker(action_pot_tracker)
 fenton_karma = fw.FentonKarma2D()
 fenton_karma.dt = 0.01
 fenton_karma.dr = 0.25
-fenton_karma.t_max = 1900
+fenton_karma.t_max = num_of_beats*interval
 
 # add the tissue and the stim parameters to the model object:
 fenton_karma.cardiac_tissue = tissue
