@@ -9,10 +9,8 @@ sys.path.append(str(Path(__file__).resolve().parents[2]))
 import cyclops.cycletools as ct
 import cyclops.phasetools as ft
 from cyclops.extended_phasemapping import ExtendedPhaseMapping
-from custom_cyclops_classes import EPMMultiSlider
 
-
-def analyze(
+def multi_epm(
     parser,
     case,
     maps,
@@ -23,13 +21,14 @@ def analyze(
     phase_calculator_args={},
 ):
     epms = []
-    for map in maps:
-        for method in methods:
+    for method in methods:
+        for map in maps:
             filepath = (
-                Path(__file__).parent.parent / f"pickle/{case}/{method}/{map}.pkl"
+                Path(__file__).parent.parent.parent / f"pickle/{case}/{method}/{map}.pkl"
             )
             print(filepath)
             if os.path.exists(filepath):
+            # if False:
                 with open(filepath, "rb") as f:
                     epm = pickle.load(f)
             else:
@@ -60,12 +59,4 @@ def analyze(
 
             epms.append(epm)
 
-    slider = EPMMultiSlider(epms)
-
-    # slider.visible_objects = ["phasefield"]
-    slider.visible_objects = ["phasefield", "critical_cycles"]
-    # slider.visible_objects = ["phasefield", "critical_cycles", "noncritical_cycles"]
-    slider.plotter.link_views()
-    slider.plotter.camera_position = "xy"
-    slider.plotter.camera.zoom(1.5)
-    slider.show()
+    return epms

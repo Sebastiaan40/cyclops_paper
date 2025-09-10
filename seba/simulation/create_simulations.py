@@ -8,7 +8,7 @@ import finitewave as fw
 from setup import square_setup
 from custom_fw_classes import VoltageMapTracker, ModifiedAlievPanfilov2D
 
-root = Path(__file__).parent.parent.parent
+root = Path(__file__).parent.parent.parent.parent
 path = root.joinpath(f"dgm_database/fw_sim/Seba")
 
 # root = Path(__file__).parent
@@ -76,6 +76,7 @@ for test in [test]:
     # Setup scars, stimuli and ablations
     (
         scars_matrix,
+        holes_matrix,
         temp_scars_matrix,
         stimuli_matrix,
         extra_stimuli_matrix,
@@ -88,6 +89,7 @@ for test in [test]:
     for i, m in enumerate(
         [
             scars_matrix,
+            holes_matrix,
             temp_scars_matrix,
             stimuli_matrix,
             extra_stimuli_matrix,
@@ -132,6 +134,7 @@ for test in [test]:
         def execute(self, model):
             model.cardiac_tissue.mesh[np.nonzero(scars_matrix)] = 2
             model.cardiac_tissue.mesh[np.nonzero(self.temp_scar)] = self.tag
+            model.cardiac_tissue.mesh[np.nonzero(holes_matrix)] = 0
 
             tissue.add_boundaries()
             model.compute_weights()

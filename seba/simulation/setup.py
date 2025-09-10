@@ -7,6 +7,7 @@ def square_setup(test, model, H_eps, SC_eps, ST_eps):
     mesh = model.cardiac_tissue.mesh
     ni, nj = mesh.shape
     scars_matrix = np.zeros((ni, nj), dtype=int)
+    holes_matrix = np.zeros((ni, nj), dtype=int)
     temp_scars_matrix = np.zeros((ni, nj), dtype=int)
     ablation_matrix = np.zeros((ni, nj), dtype=int)
     stimuli_matrix = np.zeros((ni, nj))
@@ -22,15 +23,16 @@ def square_setup(test, model, H_eps, SC_eps, ST_eps):
         scars_matrix = draw_circle(scars_matrix, (ni // 2, nj // 2), SC_eps, tag=1)
     if test == 3:
         # draw hole
-        model.cardiac_tissue.mesh = draw_circle(
-            model.cardiac_tissue.mesh, (ni // 2, nj // 2), SC_eps, tag=0
+        holes_matrix = draw_circle(
+            holes_matrix, (ni // 2, nj // 2), SC_eps, tag=1
         )
     if test == 4:
         # draw hybrid phase barrier
-        scars_matrix = draw_circle(scars_matrix, (ni // 2, 9 * nj // 16), SC_eps, tag=1)
-        model.cardiac_tissue.mesh = draw_circle(
-            model.cardiac_tissue.mesh, (ni // 2, 7*nj // 16), SC_eps, tag=0
+        holes_matrix = draw_circle(
+            holes_matrix, (ni // 2, 7*nj // 16), SC_eps, tag=1
         )
+        scars_matrix = draw_circle(scars_matrix, (ni // 2, 9 * nj // 16), SC_eps, tag=1)
+
     if test in [5, 6]:
         scars_matrix = draw_circle(
             scars_matrix, (ni // 2, nj // 2), 1.7 * SC_eps, tag=1
@@ -75,6 +77,7 @@ def square_setup(test, model, H_eps, SC_eps, ST_eps):
 
     return (
         scars_matrix,
+        holes_matrix,
         temp_scars_matrix,
         stimuli_matrix,
         extra_stimuli_matrix,

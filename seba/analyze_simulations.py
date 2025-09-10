@@ -1,20 +1,17 @@
-import os
-import pickle
 import sys
 from pathlib import Path
+
+from analysis.visualization.plots import multi_slider
 
 # Make sure that the project root is on sys.path
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
 import numpy as np
 import pandas as pd
-import cyclops.cycletools as ct
 import cyclops.phasetools as ft
-import cyclops.visualtools as vt
-from cyclops.extended_phasemapping import ExtendedPhaseMapping
 from cyclops.parsetools import parse_utils
 
-from analyze import analyze
+from analysis.methods.multi_epm import multi_epm
 
 
 def parse_finitewave_mesh(case, filename):
@@ -56,13 +53,27 @@ def load_finitewave_mesh(case, filename):
 
 
 if __name__ == "__main__":
+    # show simulations
+    show = "phasefield"
+    methods = ["pm"]
+    scalar_name = "AlievPanfilov\nu-variable"
+
+    # show pm and epm detections
+    # show = "comparison"
+    # methods = ["pm", "epm"]
+    # scalar_name = None
+
     parser = parse_finitewave_mesh
     case = "square"
-    maps = [f"mesh{i}" for i in range(1, 5)]
-    # maps = [f"mesh{i}" for i in [5, 6, 2, 7]]
-    methods = ["pm", "epm"]
-    th = 0.04 * np.pi
-    analyze(parser, case, maps, methods, th)
+    # maps = [f"mesh{i}" for i in range(1, 5)]
+    maps = [f"mesh{i}" for i in [5, 6, 2, 7]]
+
+    phase_calculator = ft.PhaseField.from_signals
+    th = 0.1 * np.pi
+    epms = multi_epm(parser, case, maps, phase_calculator, methods, th)
+    slider = multi_slider(epms, scalar_name, show)
+    slider.show()
+    
 
 
     

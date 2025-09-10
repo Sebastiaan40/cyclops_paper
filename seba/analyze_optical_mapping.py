@@ -3,7 +3,8 @@ import numpy as np
 import cyclops.parsetools as pt
 import cyclops.phasetools as ft
 
-from analyze import analyze
+from analysis.methods.multi_epm import multi_epm
+from analysis.visualization.plots import multi_slider
 
 if __name__ == "__main__":
     # case = "rat/rec_psgui"
@@ -68,9 +69,21 @@ if __name__ == "__main__":
     # case = "rabbit/3.2sec"
     # maps = ["ratio_data33_2023_02_22_smoothed_mask.mat"]
 
+    # show simulations
+    show = "phasefield"
+    methods = ["pm"]
+    scalar_name = "Optical intensity"
+
+    # show pm and epm detections
+    # show = "comparison"
+    # methods = ["pm", "epm"]
+    # scalar_name = None
+
     parser = pt.parse_vf_optical
     phase_calculator = ft.PhaseField.from_signals
     parser_args = dict()
-    methods = ["pm", "epm"]
+
     th = 0.5 * np.pi
-    analyze(parser, case, maps, phase_calculator, methods, th, parser_args)
+    epms = multi_epm(parser, case, maps, phase_calculator, methods, th, parser_args)
+    slider = multi_slider(epms, scalar_name, show)
+    slider.show()
